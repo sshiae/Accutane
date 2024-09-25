@@ -50,7 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.accutane.R
-import com.example.accutane.model.AccutaneCourseItem
+import com.example.accutane.domain.model.AccutaneCourseModel
 import com.example.accutane.ui.theme.Black80
 import com.example.accutane.ui.theme.Gray80
 import com.example.accutane.ui.theme.White80
@@ -59,7 +59,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccutaneCoursesScreen(
-    state: AccutaneCoursesContract.State
+    state: AccutaneCoursesContract.State,
+    onNavigationRequested: (itemId: Long) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -80,7 +81,8 @@ fun AccutaneCoursesScreen(
                 SearchBar()
                 Box {
                     AccutaneCourseList(
-                        courseItems = state.items
+                        courseItems = state.items,
+                        onItemClicked = onNavigationRequested
                     )
                     if (state.isLoading) {
                         LoadingBar()
@@ -149,7 +151,8 @@ fun AccutaneCoursesAppBar(
 
 @Composable
 fun AccutaneCourseList(
-    courseItems: List<AccutaneCourseItem>,
+    courseItems: List<AccutaneCourseModel>,
+    onItemClicked: (id: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -161,8 +164,10 @@ fun AccutaneCourseList(
     ) {
         itemsIndexed(courseItems) { index, item ->
             AccutaneCourseItem(
+                id = item.id,
                 title = item.name,
-                subtitle = item.createDate
+                subtitle = item.createDate,
+                onItemClicked = onItemClicked
             )
             if (index < courseItems.lastIndex) {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -173,8 +178,10 @@ fun AccutaneCourseList(
 
 @Composable
 fun AccutaneCourseItem(
+    id: Long,
     title: String,
     subtitle: String,
+    onItemClicked: (id: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     ElevatedCard(
@@ -187,6 +194,9 @@ fun AccutaneCourseItem(
         modifier = modifier
             .height(58.dp)
             .fillMaxWidth()
+            .clickable {
+                onItemClicked(id)
+            }
     ) {
         Box(
             modifier = Modifier

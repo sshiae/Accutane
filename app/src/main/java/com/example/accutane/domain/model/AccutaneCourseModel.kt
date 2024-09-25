@@ -1,10 +1,10 @@
-package com.example.accutane.model
+package com.example.accutane.domain.model
 
 /**
  * The model for the course in the app
  */
-data class AccutaneCourseItem(
-    val id: String,
+data class AccutaneCourseModel(
+    val id: Long,
     val name: String,
     val dailyDose: Double,
     val totalTargetDose: Double,
