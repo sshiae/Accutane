@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Аккутан</string>
+    <string name="accutane_course_item_delete_desc">Кнопка удаления</string>
+    <string name="placeholder_search">Поиск</string>
+    <string name="accutane_courses_top_bar">Список курсов</string>
+    <string name="filters_text_btn">Применить</string>
+    <string name="add_course_text_btn">Добавить курс</string>
+</resources>
