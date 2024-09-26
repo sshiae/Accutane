@@ -14,4 +14,8 @@ class AccutaneInteractor @Inject constructor(
     suspend fun getAccutaneCourses(): List<AccutaneCourseModel> {
         return localRepository.getAccutaneCourses()
     }
+
+    suspend fun deleteAccutaneCourse(id: Long) {
+        localRepository.deleteAccutaneCourse(id)
+    }
 }

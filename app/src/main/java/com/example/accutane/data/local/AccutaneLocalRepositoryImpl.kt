@@ -15,4 +15,8 @@ class AccutaneLocalRepositoryImpl @Inject constructor(
     override suspend fun getAccutaneCourses(): List<AccutaneCourseModel> {
         return accutaneDao.getAccutaneCourses().toModels()
     }
+
+    override suspend fun deleteAccutaneCourse(id: Long) {
+        accutaneDao.deleteAccutaneCourse(id)
+    }
 }

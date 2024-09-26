@@ -12,4 +12,7 @@ interface AccutaneDao {
 
     @Query("SELECT * FROM accutane_course")
     suspend fun getAccutaneCourses(): List<AccutaneCourseDatabase>
+
+    @Query("DELETE FROM accutane_course WHERE id = :id")
+    suspend fun deleteAccutaneCourse(id: Long)
 }

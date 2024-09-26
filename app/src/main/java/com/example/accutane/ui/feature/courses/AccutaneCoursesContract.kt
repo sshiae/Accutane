@@ -12,6 +12,6 @@ class AccutaneCoursesContract {
      */
     data class State(
         val items: List<AccutaneCourseModel> = listOf(),
-        val isLoading: Boolean = false
+        val filteredItems: List<AccutaneCourseModel> = listOf()
     )
 }

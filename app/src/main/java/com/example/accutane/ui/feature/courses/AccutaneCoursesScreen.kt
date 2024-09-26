@@ -1,5 +1,6 @@
 package com.example.accutane.ui.feature.courses
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,10 +16,12 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -36,102 +39,129 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.accutane.R
+import com.example.accutane.domain.model.AccutaneCourseFilterModel
 import com.example.accutane.domain.model.AccutaneCourseModel
+import com.example.accutane.getOrDefault
+import com.example.accutane.set
 import com.example.accutane.ui.theme.Black80
 import com.example.accutane.ui.theme.Gray80
 import com.example.accutane.ui.theme.White80
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccutaneCoursesScreen(
-    state: AccutaneCoursesContract.State,
-    onNavigationRequested: (itemId: Long) -> Unit
+    viewModel: AccutaneCoursesViewModel = hiltViewModel(),
+    onItemClicked: (id: Long) -> Unit
+) {
+    AccutaneCoursesContent(
+        accutaneCoursesState = viewModel.state,
+        loadingState = viewModel.loadingState,
+        errorMessageState = viewModel.errorMessageState,
+        getUniqueNames = { viewModel.getUniqueNames() },
+        onItemClicked = onItemClicked,
+        onDeleteItem = { id -> viewModel.deleteAccutaneCourse(id) },
+        onFilterItems = { filters -> viewModel.filterItems(filters) },
+        onClearError = { viewModel.clearError() }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AccutaneCoursesContent(
+    accutaneCoursesState: AccutaneCoursesContract.State,
+    loadingState: Boolean,
+    errorMessageState: String?,
+    getUniqueNames: () -> List<String>,
+    onItemClicked: (id: Long) -> Unit,
+    onDeleteItem: (id: Long) -> Unit,
+    onFilterItems: (filters: List<AccutaneCourseFilterModel>) -> Unit,
+    onClearError: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var showBottomSheet by rememberSaveable { mutableStateOf(false) }
+    val onShowBottomSheet = { showBottomSheet = true }
     Scaffold(
         topBar = {
             AccutaneCoursesAppBar()
-        }
+        },
+        modifier = modifier
     ) { innerPadding ->
-        Column(
-            verticalArrangement = Arrangement.SpaceBetween,
+        Box(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .fillMaxSize()
         ) {
-            Column {
-                SearchBar()
-                Box {
-                    AccutaneCourseList(
-                        courseItems = state.items,
-                        onItemClicked = onNavigationRequested
-                    )
-                    if (state.isLoading) {
-                        LoadingBar()
-                    }
-                }
+            if (loadingState) {
+                LoadingBar()
             }
-            Button(
-                onClick = { /*TODO*/ },
-                shape = RoundedCornerShape(
-                    topStart = 0.dp,
-                    topEnd = 0.dp,
-                    bottomEnd = 0.dp,
-                    bottomStart = 0.dp,
-                ),
+            Column(
+                verticalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .fillMaxSize()
             ) {
-                Text(
-                    text = stringResource(id = R.string.add_course_text_btn),
-                    color = Color.White,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        color = White80
-                    ),
-                    overflow = TextOverflow.Ellipsis
+                SearchBar(onShowBottomSheet = onShowBottomSheet)
+                AccutaneCourseList(
+                    courseItems = accutaneCoursesState.filteredItems,
+                    onItemClicked = onItemClicked,
+                    onDeleteItem = onDeleteItem,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(vertical = 16.dp)
+                )
+                Button(
+                    textId = R.string.add_course_text_btn,
+                    onClick = {
+                        //TODO: Переход на экран с добавлением
+                    }
                 )
             }
-        }
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
-                },
-                sheetState = sheetState
-            ) {
-                ModalBottomSheetContent(
-                    names = emptyList(),
-                    onDismiss = {
-                        scope.launch {
-                            sheetState.hide()
-                        }.invokeOnCompletion {
-                            if (!sheetState.isVisible) {
-                                showBottomSheet = false
+            if (showBottomSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet = false
+                    },
+                    sheetState = sheetState
+                ) {
+                    ModalBottomSheetContent(
+                        names = getUniqueNames(),
+                        onFilterItems = onFilterItems,
+                        onDismiss = {
+                            scope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    showBottomSheet = false
+                                }
                             }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
+    }
+    errorMessageState?.let { errorMessage ->
+        ErrorAlertDialog(
+            errorMessage = errorMessage,
+            onClearError = onClearError
+        )
     }
 }
 
@@ -153,12 +183,13 @@ fun AccutaneCoursesAppBar(
 fun AccutaneCourseList(
     courseItems: List<AccutaneCourseModel>,
     onItemClicked: (id: Long) -> Unit,
+    onDeleteItem: (id: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
         contentPadding = PaddingValues(
-            top = 30.dp,
-            bottom = 30.dp
+            top = 10.dp,
+            bottom = 10.dp
         ),
         modifier = modifier
     ) {
@@ -167,7 +198,8 @@ fun AccutaneCourseList(
                 id = item.id,
                 title = item.name,
                 subtitle = item.createDate,
-                onItemClicked = onItemClicked
+                onItemClicked = onItemClicked,
+                onDeleteItem = onDeleteItem
             )
             if (index < courseItems.lastIndex) {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -182,6 +214,7 @@ fun AccutaneCourseItem(
     title: String,
     subtitle: String,
     onItemClicked: (id: Long) -> Unit,
+    onDeleteItem: (id: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     ElevatedCard(
@@ -228,7 +261,7 @@ fun AccutaneCourseItem(
                     .align(Alignment.CenterEnd)
                     .size(24.dp)
                     .clickable {
-                        //TODO
+                        onDeleteItem(id)
                     }
             )
         }
@@ -237,6 +270,7 @@ fun AccutaneCourseItem(
 
 @Composable
 fun SearchBar(
+    onShowBottomSheet: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TextField(
@@ -254,7 +288,7 @@ fun SearchBar(
                 contentDescription = null,
                 modifier = Modifier
                     .clickable {
-                        //TODO
+                        onShowBottomSheet()
                     }
             )
         },
@@ -287,51 +321,100 @@ fun LoadingBar() {
 fun ModalBottomSheetContent(
     names: List<String>,
     onDismiss: () -> Unit,
+    onFilterItems: (filters: List<AccutaneCourseFilterModel>) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val checkedState = remember {
-        mutableStateListOf(false, false, false)
+    val checkedState = rememberSaveable {
+        names.map { item ->
+            AccutaneCourseFilterModel(key = item, value = false)
+        }.toMutableStateList()
     }
     Column(
         modifier = modifier
-            .fillMaxWidth()
             .padding(16.dp)
+            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
     ) {
-        names.forEachIndexed { index, name ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Checkbox(
-                    checked = checkedState[index], 
-                    onCheckedChange = {
-                        checkedState[index] = it
-                    }
-                )
-                Text(text = name)
+        LazyColumn(
+            modifier = Modifier
+                .height(144.dp)
+        ) {
+            items(names) { name ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Checkbox(
+                        checked = checkedState.getOrDefault(name, false),
+                        onCheckedChange = {
+                            checkedState.set(name, it)
+                        }
+                    )
+                    Text(text = name)
+                }
             }
         }
         Spacer(modifier = Modifier.height(30.dp))
         Button(
-            onClick = onDismiss,
-            shape = RoundedCornerShape(
-                topStart = 0.dp,
-                topEnd = 0.dp,
-                bottomEnd = 0.dp,
-                bottomStart = 0.dp,
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(id = R.string.filters_text_btn),
-                color = Color.White,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    color = White80
-                ),
-                overflow = TextOverflow.Ellipsis
-            )
-        }
+            textId = R.string.filters_text_btn,
+            onClick = {
+                onFilterItems(checkedState)
+                onDismiss()
+            }
+        )
     }
+}
+
+@Composable
+fun Button(
+    @StringRes textId: Int,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = {
+            onClick()
+        },
+        shape = RoundedCornerShape(
+            topStart = 0.dp,
+            topEnd = 0.dp,
+            bottomEnd = 0.dp,
+            bottomStart = 0.dp,
+        ),
+        modifier = modifier
+            .padding(bottom = 16.dp)
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = stringResource(id = textId),
+            color = Color.White,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                color = White80
+            ),
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+fun ErrorAlertDialog(
+    errorMessage: String,
+    onClearError: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AlertDialog(
+        onDismissRequest = {
+            onClearError()
+        },
+        title = { Text("Ошибка") },
+        text = { Text(errorMessage) },
+        confirmButton = {
+            Button(onClick = {
+                onClearError()
+            }) {
+                Text("ОК")
+            }
+        },
+        modifier = modifier
+    )
 }

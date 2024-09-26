@@ -5,8 +5,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.accutane.domain.model.AccutaneCourseModel
 import com.example.accutane.ui.feature.courses.AccutaneCourseItem
 import com.example.accutane.ui.feature.courses.AccutaneCourseList
+import com.example.accutane.ui.feature.courses.AccutaneCoursesContent
 import com.example.accutane.ui.feature.courses.AccutaneCoursesContract
-import com.example.accutane.ui.feature.courses.AccutaneCoursesScreen
 import com.example.accutane.ui.feature.courses.LoadingBar
 import com.example.accutane.ui.feature.courses.ModalBottomSheetContent
 import com.example.accutane.ui.feature.courses.SearchBar
@@ -16,7 +16,7 @@ import com.example.accutane.ui.theme.AccutaneTheme
 @Composable
 private fun SearchBarPreview() {
     AccutaneTheme {
-        SearchBar()
+        SearchBar(onShowBottomSheet = {})
     }
 }
 
@@ -28,7 +28,8 @@ private fun AccutaneCourseItemPreview() {
             id = 1L,
             title = "Акнекутан",
             subtitle = "23 ноября 2023",
-            onItemClicked = {}
+            onItemClicked = {},
+            onDeleteItem = {}
         )
     }
 }
@@ -39,7 +40,8 @@ private fun AccutaneCourseListPreview() {
     AccutaneTheme {
         AccutaneCourseList(
             courseItems = getPreviewCourseList(),
-            onItemClicked = {}
+            onItemClicked = {},
+            onDeleteItem = {}
         )
     }
 }
@@ -47,15 +49,19 @@ private fun AccutaneCourseListPreview() {
 @Preview
 @Composable
 private fun AccutaneCoursesScreenPreview() {
-    AccutaneTheme(
-        dynamicColor = false
-    ) {
-        AccutaneCoursesScreen(
-            state = AccutaneCoursesContract.State(
+    AccutaneTheme {
+        AccutaneCoursesContent(
+            accutaneCoursesState = AccutaneCoursesContract.State(
                 items = getPreviewCourseList(),
-                isLoading = false
+                filteredItems = getPreviewCourseList()
             ),
-            onNavigationRequested = {}
+            loadingState = false,
+            errorMessageState = null,
+            getUniqueNames = { listOf() },
+            onItemClicked = {},
+            onDeleteItem = {},
+            onFilterItems = {},
+            onClearError = {}
         )
     }
 }
@@ -73,7 +79,8 @@ private fun LoadingBarPreview() {
 private fun BottomSheetContentPreview() {
     AccutaneTheme {
         ModalBottomSheetContent(
-            names = listOf("Аккутан", "Роаккутан", "Сотрет"),
+            names = listOf("Аккутан", "Роаккутан", "Сотрет", "Сотрет", "Сотрет", "Сотрет", "Сотрет", "Сотрет", "Сотрет", "Сотрет", "Сотрет", "Сотрет"),
+            onFilterItems = {},
             onDismiss = {}
         )
     }
@@ -82,6 +89,68 @@ private fun BottomSheetContentPreview() {
 private fun getPreviewCourseList(): List<AccutaneCourseModel> {
     val previewData = listOf(
         AccutaneCourseModel(
+            id = 1,
+            name = "Курс 1",
+            dailyDose = 20.0,
+            totalTargetDose = 1200.0,
+            accumulatedCourseDose = 200.0,
+            appointmentReminderTime = "2023-10-01T09:00:00",
+            createDate = "23 ноября 2023"
+        ),
+        AccutaneCourseModel(
+            id = 1,
+            name = "Курс 1",
+            dailyDose = 20.0,
+            totalTargetDose = 1200.0,
+            accumulatedCourseDose = 200.0,
+            appointmentReminderTime = "2023-10-01T09:00:00",
+            createDate = "23 ноября 2023"
+        ),
+        AccutaneCourseModel(
+            id = 1,
+            name = "Курс 1",
+            dailyDose = 20.0,
+            totalTargetDose = 1200.0,
+            accumulatedCourseDose = 200.0,
+            appointmentReminderTime = "2023-10-01T09:00:00",
+            createDate = "23 ноября 2023"
+        ),
+        AccutaneCourseModel(
+            id = 1,
+            name = "Курс 1",
+            dailyDose = 20.0,
+            totalTargetDose = 1200.0,
+            accumulatedCourseDose = 200.0,
+            appointmentReminderTime = "2023-10-01T09:00:00",
+            createDate = "23 ноября 2023"
+        ),
+        AccutaneCourseModel(
+            id = 1,
+            name = "Курс 1",
+            dailyDose = 20.0,
+            totalTargetDose = 1200.0,
+            accumulatedCourseDose = 200.0,
+            appointmentReminderTime = "2023-10-01T09:00:00",
+            createDate = "23 ноября 2023"
+        ),
+        AccutaneCourseModel(
+            id = 1,
+            name = "Курс 1",
+            dailyDose = 20.0,
+            totalTargetDose = 1200.0,
+            accumulatedCourseDose = 200.0,
+            appointmentReminderTime = "2023-10-01T09:00:00",
+            createDate = "23 ноября 2023"
+        ),
+        AccutaneCourseModel(
+            id = 1,
+            name = "Курс 1",
+            dailyDose = 20.0,
+            totalTargetDose = 1200.0,
+            accumulatedCourseDose = 200.0,
+            appointmentReminderTime = "2023-10-01T09:00:00",
+            createDate = "23 ноября 2023"
+        ),        AccutaneCourseModel(
             id = 1,
             name = "Курс 1",
             dailyDose = 20.0,
