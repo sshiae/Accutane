@@ -10,12 +10,19 @@ import javax.inject.Inject
 class AccutaneInteractor @Inject constructor(
     private val localRepository: AccutaneLocalRepository
 ) {
-
     suspend fun getAccutaneCourses(): List<AccutaneCourseModel> {
         return localRepository.getAccutaneCourses()
     }
 
-    suspend fun deleteAccutaneCourse(id: Long) {
+    suspend fun deleteAccutaneCourse(id: Long?) {
         localRepository.deleteAccutaneCourse(id)
+    }
+
+    suspend fun getAccutaneCourseById(id: Long?): AccutaneCourseModel {
+        return localRepository.getAccutaneCourseById(id)
+    }
+
+    suspend fun saveAccutaneCourse(model: AccutaneCourseModel) {
+        localRepository.saveAccutaneCourse(model)
     }
 }

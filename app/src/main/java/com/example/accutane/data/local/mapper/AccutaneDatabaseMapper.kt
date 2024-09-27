@@ -18,3 +18,15 @@ fun AccutaneCourseDatabase.toModel(): AccutaneCourseModel {
         createDate = createDate
     )
 }
+
+fun AccutaneCourseModel.toDatabase(): AccutaneCourseDatabase {
+    return AccutaneCourseDatabase(
+        id = id,
+        name = name,
+        dailyDose = dailyDose,
+        totalTargetDose = totalTargetDose,
+        accumulatedCourseDose = accumulatedCourseDose,
+        appointmentReminderTime = appointmentReminderTime,
+        createDate = createDate
+    )
+}

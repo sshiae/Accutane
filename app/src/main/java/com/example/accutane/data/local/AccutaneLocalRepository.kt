@@ -15,5 +15,15 @@ interface AccutaneLocalRepository {
     /**
      * Delete a course
      */
-    suspend fun deleteAccutaneCourse(id: Long)
+    suspend fun deleteAccutaneCourse(id: Long?)
+
+    /**
+     * Get a course by ID
+     */
+    suspend fun getAccutaneCourseById(id: Long?): AccutaneCourseModel
+
+    /**
+     * Save accutane course
+     */
+    suspend fun saveAccutaneCourse(model: AccutaneCourseModel)
 }

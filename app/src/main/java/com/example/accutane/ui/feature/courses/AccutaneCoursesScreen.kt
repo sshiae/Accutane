@@ -48,11 +48,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.accutane.R
 import com.example.accutane.domain.model.AccutaneCourseFilterModel
@@ -61,13 +64,15 @@ import com.example.accutane.getOrDefault
 import com.example.accutane.set
 import com.example.accutane.ui.theme.Black80
 import com.example.accutane.ui.theme.Gray80
+import com.example.accutane.ui.theme.GrayForBackground
 import com.example.accutane.ui.theme.White80
 import kotlinx.coroutines.launch
 
 @Composable
 fun AccutaneCoursesScreen(
     viewModel: AccutaneCoursesViewModel = hiltViewModel(),
-    onItemClicked: (id: Long) -> Unit
+    onAddItem: () -> Unit,
+    onItemClicked: (id: Long?) -> Unit
 ) {
     AccutaneCoursesContent(
         accutaneCoursesState = viewModel.state,
@@ -75,6 +80,7 @@ fun AccutaneCoursesScreen(
         errorMessageState = viewModel.errorMessageState,
         getUniqueNames = { viewModel.getUniqueNames() },
         onItemClicked = onItemClicked,
+        onAddItem = onAddItem,
         onDeleteItem = { id -> viewModel.deleteAccutaneCourse(id) },
         onFilterItems = { filters -> viewModel.filterItems(filters) },
         onClearError = { viewModel.clearError() }
@@ -88,11 +94,11 @@ fun AccutaneCoursesContent(
     loadingState: Boolean,
     errorMessageState: String?,
     getUniqueNames: () -> List<String>,
-    onItemClicked: (id: Long) -> Unit,
-    onDeleteItem: (id: Long) -> Unit,
+    onAddItem: () -> Unit,
+    onItemClicked: (id: Long?) -> Unit,
+    onDeleteItem: (id: Long?) -> Unit,
     onFilterItems: (filters: List<AccutaneCourseFilterModel>) -> Unit,
-    onClearError: () -> Unit,
-    modifier: Modifier = Modifier
+    onClearError: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -101,16 +107,12 @@ fun AccutaneCoursesContent(
     Scaffold(
         topBar = {
             AccutaneCoursesAppBar()
-        },
-        modifier = modifier
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .padding(innerPadding)
         ) {
-            if (loadingState) {
-                LoadingBar()
-            }
             Column(
                 verticalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
@@ -126,11 +128,9 @@ fun AccutaneCoursesContent(
                         .weight(1f)
                         .padding(vertical = 16.dp)
                 )
-                Button(
+                AccutaneCoursesButton(
                     textId = R.string.add_course_text_btn,
-                    onClick = {
-                        //TODO: Переход на экран с добавлением
-                    }
+                    onClick = onAddItem
                 )
             }
             if (showBottomSheet) {
@@ -154,6 +154,9 @@ fun AccutaneCoursesContent(
                         }
                     )
                 }
+            }
+            if (loadingState) {
+                LoadingBar()
             }
         }
     }
@@ -182,8 +185,8 @@ fun AccutaneCoursesAppBar(
 @Composable
 fun AccutaneCourseList(
     courseItems: List<AccutaneCourseModel>,
-    onItemClicked: (id: Long) -> Unit,
-    onDeleteItem: (id: Long) -> Unit,
+    onItemClicked: (id: Long?) -> Unit,
+    onDeleteItem: (id: Long?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -210,11 +213,11 @@ fun AccutaneCourseList(
 
 @Composable
 fun AccutaneCourseItem(
-    id: Long,
+    id: Long?,
     title: String,
     subtitle: String,
-    onItemClicked: (id: Long) -> Unit,
-    onDeleteItem: (id: Long) -> Unit,
+    onItemClicked: (id: Long?) -> Unit,
+    onDeleteItem: (id: Long?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     ElevatedCard(
@@ -311,7 +314,8 @@ fun SearchBar(
 fun LoadingBar() {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
     ) {
         CircularProgressIndicator()
     }
@@ -355,7 +359,7 @@ fun ModalBottomSheetContent(
             }
         }
         Spacer(modifier = Modifier.height(30.dp))
-        Button(
+        AccutaneCoursesButton(
             textId = R.string.filters_text_btn,
             onClick = {
                 onFilterItems(checkedState)
@@ -366,7 +370,7 @@ fun ModalBottomSheetContent(
 }
 
 @Composable
-fun Button(
+fun AccutaneCoursesButton(
     @StringRes textId: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -403,15 +407,15 @@ fun ErrorAlertDialog(
     modifier: Modifier = Modifier
 ) {
     AlertDialog(
-        onDismissRequest = {
-            onClearError()
+        onDismissRequest = onClearError,
+        title = {
+            Text("Ошибка")
         },
-        title = { Text("Ошибка") },
-        text = { Text(errorMessage) },
+        text = {
+            Text(errorMessage)
+        },
         confirmButton = {
-            Button(onClick = {
-                onClearError()
-            }) {
+            Button(onClick = onClearError) {
                 Text("ОК")
             }
         },

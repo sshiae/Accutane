@@ -76,7 +76,7 @@ class AccutaneCoursesViewModel @Inject constructor(
     /**
      * Delete a course
      */
-    fun deleteAccutaneCourse(id: Long) {
+    fun deleteAccutaneCourse(id: Long?) {
         viewModelScope.launch {
             try {
                 showLoading()

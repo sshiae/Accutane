@@ -11,7 +11,7 @@ import androidx.room.PrimaryKey
 data class AccutaneCourseDatabase(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Long,
+    val id: Long?,
     @ColumnInfo(name = "name")
     val name: String,
     @ColumnInfo(name = "daily_dose")

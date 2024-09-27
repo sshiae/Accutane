@@ -5,4 +5,15 @@
     <string name="accutane_courses_top_bar">Список курсов</string>
     <string name="filters_text_btn">Применить</string>
     <string name="add_course_text_btn">Добавить курс</string>
+    <string name="accutane_course_top_bar_edit">Изменение курса</string>
+    <string name="accutane_course_top_bar_add">Добавление курса</string>
+    <string name="name_placeholder">Наименование курса</string>
+    <string name="daily_dose_placeholder">Суточная доза</string>
+    <string name="total_target_dose_placeholder">Общая целевая доза</string>
+    <string name="accumulated_course_dose_placeholder">Накопленная курсовая доза</string>
+    <string name="appointment_reminder_time_placeholder">Время напоминания о приеме (HH:MM)</string>
+    <string name="edit_course_text_btn">Изменить курс</string>
+    <string name="invalid_value">Неверное значение</string>
+    <string name="invalid_number_format">Неверный формат числа</string>
+    <string name="invalid_time_format">Неверный формат времени</string>
 </resources>

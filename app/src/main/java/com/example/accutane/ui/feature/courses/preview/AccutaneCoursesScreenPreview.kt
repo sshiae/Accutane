@@ -61,7 +61,8 @@ private fun AccutaneCoursesScreenPreview() {
             onItemClicked = {},
             onDeleteItem = {},
             onFilterItems = {},
-            onClearError = {}
+            onClearError = {},
+            onAddItem = {}
         )
     }
 }
