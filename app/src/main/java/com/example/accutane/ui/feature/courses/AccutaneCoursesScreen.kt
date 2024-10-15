@@ -1,6 +1,5 @@
 package com.example.accutane.ui.feature.courses
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,11 +20,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -48,24 +44,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.window.DialogWindowProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.accutane.R
 import com.example.accutane.domain.model.AccutaneCourseFilterModel
 import com.example.accutane.domain.model.AccutaneCourseModel
+import com.example.accutane.getCurrentRusDate
 import com.example.accutane.getOrDefault
 import com.example.accutane.set
+import com.example.accutane.ui.feature.AccutaneButton
+import com.example.accutane.ui.feature.AccutaneErrorAlertDialog
+import com.example.accutane.ui.feature.LoadingBar
 import com.example.accutane.ui.theme.Black80
 import com.example.accutane.ui.theme.Gray80
-import com.example.accutane.ui.theme.GrayForBackground
-import com.example.accutane.ui.theme.White80
 import kotlinx.coroutines.launch
 
 @Composable
@@ -82,7 +77,8 @@ fun AccutaneCoursesScreen(
         onItemClicked = onItemClicked,
         onAddItem = onAddItem,
         onDeleteItem = { id -> viewModel.deleteAccutaneCourse(id) },
-        onFilterItems = { filters -> viewModel.filterItems(filters) },
+        onFilterItems = { filters -> viewModel.setFilters(filters) },
+        onSearch = { searchQuery -> viewModel.setSearchQuery(searchQuery) },
         onClearError = { viewModel.clearError() }
     )
 }
@@ -98,6 +94,7 @@ fun AccutaneCoursesContent(
     onItemClicked: (id: Long?) -> Unit,
     onDeleteItem: (id: Long?) -> Unit,
     onFilterItems: (filters: List<AccutaneCourseFilterModel>) -> Unit,
+    onSearch: (searchQuery: String) -> Unit,
     onClearError: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -116,10 +113,14 @@ fun AccutaneCoursesContent(
             Column(
                 verticalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
+                    .padding(16.dp)
                     .fillMaxSize()
             ) {
-                SearchBar(onShowBottomSheet = onShowBottomSheet)
+                SearchBar(
+                    onShowBottomSheet = onShowBottomSheet,
+                    searchQuery = accutaneCoursesState.searchQuery,
+                    onSearch = onSearch
+                )
                 AccutaneCourseList(
                     courseItems = accutaneCoursesState.filteredItems,
                     onItemClicked = onItemClicked,
@@ -128,7 +129,7 @@ fun AccutaneCoursesContent(
                         .weight(1f)
                         .padding(vertical = 16.dp)
                 )
-                AccutaneCoursesButton(
+                AccutaneButton(
                     textId = R.string.add_course_text_btn,
                     onClick = onAddItem
                 )
@@ -161,7 +162,7 @@ fun AccutaneCoursesContent(
         }
     }
     errorMessageState?.let { errorMessage ->
-        ErrorAlertDialog(
+        AccutaneErrorAlertDialog(
             errorMessage = errorMessage,
             onClearError = onClearError
         )
@@ -200,7 +201,7 @@ fun AccutaneCourseList(
             AccutaneCourseItem(
                 id = item.id,
                 title = item.name,
-                subtitle = item.createDate,
+                subtitle = item.createDate.getCurrentRusDate(),
                 onItemClicked = onItemClicked,
                 onDeleteItem = onDeleteItem
             )
@@ -273,12 +274,16 @@ fun AccutaneCourseItem(
 
 @Composable
 fun SearchBar(
+    searchQuery: String,
     onShowBottomSheet: () -> Unit,
+    onSearch: (searchQuery: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     TextField(
-        value = "",
-        onValueChange = {},
+        value = searchQuery,
+        onValueChange = {
+            onSearch(it)
+        },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
@@ -308,17 +313,6 @@ fun SearchBar(
             .fillMaxWidth()
             .heightIn(min = 56.dp)
     )
-}
-
-@Composable
-fun LoadingBar() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        CircularProgressIndicator()
-    }
 }
 
 @Composable
@@ -359,7 +353,7 @@ fun ModalBottomSheetContent(
             }
         }
         Spacer(modifier = Modifier.height(30.dp))
-        AccutaneCoursesButton(
+        AccutaneButton(
             textId = R.string.filters_text_btn,
             onClick = {
                 onFilterItems(checkedState)
@@ -367,58 +361,4 @@ fun ModalBottomSheetContent(
             }
         )
     }
-}
-
-@Composable
-fun AccutaneCoursesButton(
-    @StringRes textId: Int,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Button(
-        onClick = {
-            onClick()
-        },
-        shape = RoundedCornerShape(
-            topStart = 0.dp,
-            topEnd = 0.dp,
-            bottomEnd = 0.dp,
-            bottomStart = 0.dp,
-        ),
-        modifier = modifier
-            .padding(bottom = 16.dp)
-            .fillMaxWidth()
-    ) {
-        Text(
-            text = stringResource(id = textId),
-            color = Color.White,
-            style = MaterialTheme.typography.bodyLarge.copy(
-                color = White80
-            ),
-            overflow = TextOverflow.Ellipsis
-        )
-    }
-}
-
-@Composable
-fun ErrorAlertDialog(
-    errorMessage: String,
-    onClearError: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    AlertDialog(
-        onDismissRequest = onClearError,
-        title = {
-            Text("Ошибка")
-        },
-        text = {
-            Text(errorMessage)
-        },
-        confirmButton = {
-            Button(onClick = onClearError) {
-                Text("ОК")
-            }
-        },
-        modifier = modifier
-    )
 }

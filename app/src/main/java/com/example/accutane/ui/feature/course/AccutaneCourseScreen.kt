@@ -7,8 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,11 +14,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -31,13 +26,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.accutane.R
 import com.example.accutane.domain.model.AccutaneCourseModel
-import com.example.accutane.ui.feature.courses.AccutaneCoursesButton
-import com.example.accutane.ui.feature.courses.ErrorAlertDialog
-import com.example.accutane.ui.feature.courses.LoadingBar
+import com.example.accutane.ui.feature.AccutaneButton
+import com.example.accutane.ui.feature.AccutaneErrorAlertDialog
+import com.example.accutane.ui.feature.AccutaneInputField
+import com.example.accutane.ui.feature.LoadingBar
 import java.util.Calendar
 import java.util.Locale
 
@@ -81,7 +76,8 @@ fun AccutaneCourseScreenContent(
         totalTargetDose = model.totalTargetDose,
         accumulatedCourseDose = model.accumulatedCourseDose,
         appointmentReminderTime = model.appointmentReminderTime,
-        createDate = model.createDate
+        createDate = model.createDate,
+        terminated = false
     )
     Scaffold(
         topBar = {
@@ -94,7 +90,7 @@ fun AccutaneCourseScreenContent(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
+                    .padding(16.dp)
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(30.dp),
@@ -147,7 +143,7 @@ fun AccutaneCourseScreenContent(
                         }
                     )
                 }
-                AccutaneCoursesButton(
+                AccutaneButton(
                     textId = btnTextId,
                     onClick = {
                         onClickSave(newModel)
@@ -161,7 +157,7 @@ fun AccutaneCourseScreenContent(
         }
     }
     errorMessageState?.let { errorMessage ->
-        ErrorAlertDialog(
+        AccutaneErrorAlertDialog(
             errorMessage = errorMessage,
             onClearError = onClearError
         )
@@ -190,7 +186,7 @@ fun AccutaneCourseEditField(
     onValueChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    AccutaneCourseInputField(
+    AccutaneInputField(
         placeholderId = placeholderId,
         errorMessage = R.string.invalid_value,
         value = value,
@@ -209,7 +205,7 @@ fun AccutaneCourseDoubleField(
     onValueChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    AccutaneCourseInputField(
+    AccutaneInputField(
         placeholderId = placeholderId,
         errorMessage = R.string.invalid_number_format,
         value = value,
@@ -217,12 +213,12 @@ fun AccutaneCourseDoubleField(
         validate = { validateValue ->
             try {
                 if (validateValue.isEmpty()) {
-                    return@AccutaneCourseInputField false
+                    return@AccutaneInputField false
                 }
                 validateValue.toDouble()
-                return@AccutaneCourseInputField true
+                return@AccutaneInputField true
             } catch (e: NumberFormatException) {
-                return@AccutaneCourseInputField false
+                return@AccutaneInputField false
             }
         },
         keyboardOptions = KeyboardOptions.Default.copy(
@@ -241,7 +237,7 @@ fun AccutaneCourseTimeField(
 ) {
     var time by rememberSaveable { mutableStateOf(value) }
     var showDialog by rememberSaveable { mutableStateOf(false) }
-    AccutaneCourseInputField(
+    AccutaneInputField(
         placeholderId = placeholderId,
         errorMessage = R.string.invalid_time_format,
         value = time,
@@ -276,59 +272,5 @@ fun AccutaneCourseTimeField(
             minute,
             true
         ).show()
-    }
-}
-
-@Composable
-fun AccutaneCourseInputField(
-    @StringRes placeholderId: Int,
-    @StringRes errorMessage: Int,
-    value: String,
-    onValueChanged: (String) -> Unit,
-    validate: (String) -> Boolean,
-    modifier: Modifier = Modifier,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
-) {
-    var valueState by rememberSaveable { mutableStateOf(value) }
-    var isValidState by rememberSaveable { mutableStateOf(true) }
-
-    LaunchedEffect(value) {
-        valueState = value
-    }
-
-    Column {
-        TextField(
-            value = valueState,
-            onValueChange = {
-                valueState = it
-                isValidState = validate(it)
-                if (isValidState) {
-                    onValueChanged(it)
-                }
-            },
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                focusedContainerColor = MaterialTheme.colorScheme.surface
-            ),
-            placeholder = {
-                Text(text = stringResource(id = placeholderId))
-            },
-            trailingIcon = trailingIcon,
-            keyboardOptions = keyboardOptions,
-            isError = isValidState.not(),
-            singleLine = true,
-            modifier = modifier
-                .fillMaxWidth()
-                .heightIn(min = 56.dp)
-        )
-
-        if (isValidState.not()) {
-            Text(
-                text = stringResource(id = errorMessage),
-                color = MaterialTheme.colorScheme.error,
-                fontSize = 12.sp
-            )
-        }
     }
 }

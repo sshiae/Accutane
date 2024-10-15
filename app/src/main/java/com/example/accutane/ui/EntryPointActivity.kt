@@ -5,9 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.accutane.ui.NavigationKeys.Arg.ACCUTANE_COURSE_ID
 import com.example.accutane.ui.feature.course.AccutaneCourseScreen
 import com.example.accutane.ui.feature.courses.AccutaneCoursesScreen
 import com.example.accutane.ui.theme.AccutaneTheme
@@ -38,6 +41,16 @@ private fun AccutaneApp() {
         composable(route = NavigationKeys.Route.ACCUTANE_COURSE) {
             AccutaneCourseDestination(navController)
         }
+        composable(
+            route = NavigationKeys.Route.ACCUTANE_COURSE_DETAILS,
+            arguments = listOf(
+                navArgument(ACCUTANE_COURSE_ID) {
+                    type = NavType.LongType
+                }
+            )
+        ) {
+
+        }
     }
 }
 
@@ -49,8 +62,8 @@ private fun AccutaneCoursesDestination(
         onAddItem = {
             navController.navigate(NavigationKeys.Route.ACCUTANE_COURSE)
         },
-        onItemClicked = {
-            //TODO Сделать переход на экран с деталкой
+        onItemClicked = { itemId ->
+            navController.navigate("${NavigationKeys.Route.ACCUTANE_COURSES_LIST}/${itemId}")
         }
     )
 }
@@ -74,5 +87,6 @@ object NavigationKeys {
     object Route {
         const val ACCUTANE_COURSES_LIST = "accutane_courses_list"
         const val ACCUTANE_COURSE = "accutane_course"
+        const val ACCUTANE_COURSE_DETAILS = "$ACCUTANE_COURSES_LIST/$ACCUTANE_COURSE_ID"
     }
 }

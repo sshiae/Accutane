@@ -33,7 +33,8 @@ class AccutaneCourseViewModel @Inject constructor(
                 totalTargetDose = 0.0,
                 accumulatedCourseDose = 0.0,
                 appointmentReminderTime = "",
-                createDate = Date().getCurrentRusDate()
+                createDate = Date(),
+                terminated = false
             ),
             isAdding = true
         )

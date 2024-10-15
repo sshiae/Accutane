@@ -16,4 +16,12 @@
     <string name="invalid_value">Неверное значение</string>
     <string name="invalid_number_format">Неверный формат числа</string>
     <string name="invalid_time_format">Неверный формат времени</string>
+    <string name="resume_course_text_btn">Возобновить курс</string>
+    <string name="terminate_course_text_btn">Прекратить курс</string>
+    <string name="treatment_day">Сегодня %s лечения</string>
+    <string name="daily_dose">Суточная доза</string>
+    <string name="cumulative_dose">Накопленная курсовая доза</string>
+    <string name="target_dose">Общая целевая доза</string>
+    <string name="days_left">До конца курса</string>
+    <string name="add_course_btn_description">Добавить</string>
 </resources>

@@ -3,11 +3,11 @@ package com.example.accutane.ui.feature.courses.preview
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.accutane.domain.model.AccutaneCourseModel
+import com.example.accutane.ui.feature.LoadingBar
 import com.example.accutane.ui.feature.courses.AccutaneCourseItem
 import com.example.accutane.ui.feature.courses.AccutaneCourseList
 import com.example.accutane.ui.feature.courses.AccutaneCoursesContent
 import com.example.accutane.ui.feature.courses.AccutaneCoursesContract
-import com.example.accutane.ui.feature.courses.LoadingBar
 import com.example.accutane.ui.feature.courses.ModalBottomSheetContent
 import com.example.accutane.ui.feature.courses.SearchBar
 import com.example.accutane.ui.theme.AccutaneTheme

@@ -10,4 +10,5 @@ val Gray80 = Color(0xFF858587)
 val Blue40 = Color(0xFF3A6BBE)
 val Gray40 = Color(0xFF7D7D7D)
 
-val GrayForBackground = Color(0x80858587)
+val GrayForPieChart = Color(0xFFE9EBF3)
+val GrayForDivider = Color(0xFFE3E3E5)

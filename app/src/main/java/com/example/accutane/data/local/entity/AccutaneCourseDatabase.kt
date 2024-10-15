@@ -3,6 +3,7 @@ package com.example.accutane.data.local.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.Date
 
 /**
  * Database entity for accutane course
@@ -23,5 +24,7 @@ data class AccutaneCourseDatabase(
     @ColumnInfo(name = "appointment_reminder_time")
     val appointmentReminderTime: String,
     @ColumnInfo(name = "create_date")
-    val createDate: String
+    val createDate: Date,
+    @ColumnInfo(name = "terminated")
+    val terminated: Boolean
 )

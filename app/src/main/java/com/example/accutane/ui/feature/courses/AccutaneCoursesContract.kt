@@ -1,5 +1,6 @@
 package com.example.accutane.ui.feature.courses
 
+import com.example.accutane.domain.model.AccutaneCourseFilterModel
 import com.example.accutane.domain.model.AccutaneCourseModel
 
 /**
@@ -12,6 +13,8 @@ class AccutaneCoursesContract {
      */
     data class State(
         val items: List<AccutaneCourseModel> = listOf(),
-        val filteredItems: List<AccutaneCourseModel> = listOf()
+        val filteredItems: List<AccutaneCourseModel> = listOf(),
+        val filters: List<AccutaneCourseFilterModel> = listOf(),
+        val searchQuery: String = ""
     )
 }
