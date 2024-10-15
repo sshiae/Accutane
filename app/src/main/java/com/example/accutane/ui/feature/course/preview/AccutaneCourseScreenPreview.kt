@@ -9,6 +9,7 @@ import com.example.accutane.ui.feature.course.AccutaneCourseEditField
 import com.example.accutane.ui.feature.course.AccutaneCourseScreenContent
 import com.example.accutane.ui.feature.course.AccutaneCourseTimeField
 import com.example.accutane.ui.theme.AccutaneTheme
+import java.util.Date
 
 @Preview
 @Composable
@@ -23,7 +24,8 @@ private fun AccutaneCourseScreenContentPreview() {
                     totalTargetDose = 40.0,
                     accumulatedCourseDose = 10.0,
                     appointmentReminderTime = "9:00 AM",
-                    createDate = "2023-01-01"
+                    createDate = Date(),
+                    terminated = true
                 ),
                 isAdding = true
             ),
@@ -49,7 +51,8 @@ private fun AccutaneCourseScreenContentLoadingPreview() {
                     totalTargetDose = 40.0,
                     accumulatedCourseDose = 10.0,
                     appointmentReminderTime = "9:00 AM",
-                    createDate = "2023-01-01"
+                    createDate = Date(),
+                    terminated = true
                 ),
                 isAdding = true
             ),
@@ -75,7 +78,8 @@ private fun AccutaneCourseScreenContentWithErrorPreview() {
                     totalTargetDose = 40.0,
                     accumulatedCourseDose = 10.0,
                     appointmentReminderTime = "9:00 AM",
-                    createDate = "2023-01-01"
+                    createDate = Date(),
+                    terminated = true
                 ),
                 isAdding = true
             ),

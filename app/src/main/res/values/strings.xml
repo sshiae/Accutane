@@ -24,4 +24,5 @@
     <string name="target_dose">Общая целевая доза</string>
     <string name="days_left">До конца курса</string>
     <string name="add_course_btn_description">Добавить</string>
+    <string name="close_btn_text">Закрыть</string>
 </resources>

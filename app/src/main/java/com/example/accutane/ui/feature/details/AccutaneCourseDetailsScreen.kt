@@ -1,17 +1,25 @@
 package com.example.accutane.ui.feature.details
 
+import android.widget.Space
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -34,6 +43,7 @@ import com.example.accutane.R
 import com.example.accutane.domain.model.AccutaneCourseModel
 import com.example.accutane.getCurrentRusDate
 import com.example.accutane.ui.feature.AccutaneButton
+import com.example.accutane.ui.feature.AccutaneErrorAlertDialog
 import com.example.accutane.ui.feature.DividerLine
 import com.example.accutane.ui.feature.LoadingBar
 import com.example.accutane.ui.feature.TwoTextInRow
@@ -49,8 +59,12 @@ fun AccutaneCourseDetailsScreen(
     AccutaneCourseDetailsScreenContent(
         state = viewModel.state,
         loadingState = viewModel.loadingState,
+        errorMessageState = viewModel.errorMessageState,
         terminateCourse = { },
-        resumeCourse = { }
+        resumeCourse = { },
+        onClearError = {
+            viewModel.clearError()
+        }
     )
 }
 
@@ -58,8 +72,10 @@ fun AccutaneCourseDetailsScreen(
 fun AccutaneCourseDetailsScreenContent(
     state: AccutaneCourseDetailsContract.State,
     loadingState: Boolean,
+    errorMessageState: String?,
     terminateCourse: () -> Unit,
-    resumeCourse: () -> Unit
+    resumeCourse: () -> Unit,
+    onClearError: () -> Unit
 ) {
     state.item?.let { item ->
         val remainingDays: Int = item.getRemainingDays()
@@ -129,12 +145,12 @@ fun AccutaneCourseDetailsScreenContent(
                         if (item.terminated) {
                             AccutaneButton(
                                 textId = R.string.resume_course_text_btn,
-                                onClick = terminateCourse
+                                onClick = resumeCourse
                             )
                         } else {
                             AccutaneButton(
                                 textId = R.string.terminate_course_text_btn,
-                                onClick = resumeCourse
+                                onClick = terminateCourse
                             )
                         }
                     }
@@ -160,6 +176,12 @@ fun AccutaneCourseDetailsScreenContent(
         }
     } ?: run {
         LoadingBar()
+    }
+    errorMessageState?.let { errorMessage ->
+        AccutaneErrorAlertDialog(
+            text = errorMessage,
+            onDismiss = onClearError
+        )
     }
 }
 
@@ -201,4 +223,43 @@ fun PieChart(
                 .align(Alignment.Center)
         )
     }
+}
+
+@Composable
+fun CongratulationsDialog(
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = onDismiss,
+        title = null,
+        text = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_pill),
+                    contentDescription = "Поздравление",
+                    modifier = Modifier.size(80.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Поздравляем! Вы завершили курс.",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleMedium,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        },
+        confirmButton = {
+            AccutaneButton(
+                textId = R.string.close_btn_text,
+                onClick = { /*TODO*/ }
+            )
+        },
+        dismissButton = null
+    )
 }

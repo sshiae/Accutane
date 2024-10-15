@@ -163,8 +163,8 @@ fun AccutaneCoursesContent(
     }
     errorMessageState?.let { errorMessage ->
         AccutaneErrorAlertDialog(
-            errorMessage = errorMessage,
-            onClearError = onClearError
+            text = errorMessage,
+            onDismiss = onClearError
         )
     }
 }

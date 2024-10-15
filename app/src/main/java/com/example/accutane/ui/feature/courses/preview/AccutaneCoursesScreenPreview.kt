@@ -11,12 +11,13 @@ import com.example.accutane.ui.feature.courses.AccutaneCoursesContract
 import com.example.accutane.ui.feature.courses.ModalBottomSheetContent
 import com.example.accutane.ui.feature.courses.SearchBar
 import com.example.accutane.ui.theme.AccutaneTheme
+import java.util.Date
 
 @Preview
 @Composable
 private fun SearchBarPreview() {
     AccutaneTheme {
-        SearchBar(onShowBottomSheet = {})
+        SearchBar(onShowBottomSheet = {}, onSearch = {}, searchQuery = "fewfew")
     }
 }
 
@@ -62,7 +63,8 @@ private fun AccutaneCoursesScreenPreview() {
             onDeleteItem = {},
             onFilterItems = {},
             onClearError = {},
-            onAddItem = {}
+            onAddItem = {},
+            onSearch = {}
         )
     }
 }
@@ -96,7 +98,8 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             totalTargetDose = 1200.0,
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
-            createDate = "23 ноября 2023"
+            createDate = Date(),
+            terminated = true
         ),
         AccutaneCourseModel(
             id = 1,
@@ -105,7 +108,8 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             totalTargetDose = 1200.0,
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
-            createDate = "23 ноября 2023"
+            createDate = Date(),
+            terminated = true
         ),
         AccutaneCourseModel(
             id = 1,
@@ -114,7 +118,8 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             totalTargetDose = 1200.0,
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
-            createDate = "23 ноября 2023"
+            createDate = Date(),
+            terminated = true
         ),
         AccutaneCourseModel(
             id = 1,
@@ -123,7 +128,8 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             totalTargetDose = 1200.0,
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
-            createDate = "23 ноября 2023"
+            createDate = Date(),
+            terminated = true
         ),
         AccutaneCourseModel(
             id = 1,
@@ -132,7 +138,8 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             totalTargetDose = 1200.0,
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
-            createDate = "23 ноября 2023"
+            createDate = Date(),
+            terminated = true
         ),
         AccutaneCourseModel(
             id = 1,
@@ -141,7 +148,8 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             totalTargetDose = 1200.0,
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
-            createDate = "23 ноября 2023"
+            createDate = Date(),
+            terminated = true
         ),
         AccutaneCourseModel(
             id = 1,
@@ -150,7 +158,8 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             totalTargetDose = 1200.0,
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
-            createDate = "23 ноября 2023"
+            createDate = Date(),
+            terminated = true
         ),        AccutaneCourseModel(
             id = 1,
             name = "Курс 1",
@@ -158,7 +167,8 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             totalTargetDose = 1200.0,
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
-            createDate = "23 ноября 2023"
+            createDate = Date(),
+            terminated = true
         ),
         AccutaneCourseModel(
             id = 2,
@@ -167,7 +177,8 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             totalTargetDose = 1500.0,
             accumulatedCourseDose = 600.0,
             appointmentReminderTime = "2023-10-02T10:30:00",
-            createDate = "23 ноября 2023"
+            createDate = Date(),
+            terminated = true
         ),
         AccutaneCourseModel(
             id = 3,
@@ -176,7 +187,8 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             totalTargetDose = 1000.0,
             accumulatedCourseDose = 300.0,
             appointmentReminderTime = "2023-10-03T11:15:00",
-            createDate = "23 ноября 2023"
+            createDate = Date(),
+            terminated = true
         ),
         AccutaneCourseModel(
             id = 4,
@@ -185,7 +197,8 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             totalTargetDose = 800.0,
             accumulatedCourseDose = 150.0,
             appointmentReminderTime = "2023-10-04T14:00:00",
-            createDate = "23 ноября 2023"
+            createDate = Date(),
+            terminated = true
         ),
         AccutaneCourseModel(
             id = 5,
@@ -194,7 +207,8 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             totalTargetDose = 2000.0,
             accumulatedCourseDose = 1000.0,
             appointmentReminderTime = "2023-10-05T16:45:00",
-            createDate = "23 ноября 2023"
+            createDate = Date(),
+            terminated = true
         )
     )
     return previewData
