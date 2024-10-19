@@ -1,13 +1,11 @@
 package com.example.accutane.ui.feature.details
 
-import android.widget.Space
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -40,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.accutane.R
-import com.example.accutane.domain.model.AccutaneCourseModel
 import com.example.accutane.getCurrentRusDate
 import com.example.accutane.ui.feature.AccutaneButton
 import com.example.accutane.ui.feature.AccutaneErrorAlertDialog
@@ -60,8 +56,8 @@ fun AccutaneCourseDetailsScreen(
         state = viewModel.state,
         loadingState = viewModel.loadingState,
         errorMessageState = viewModel.errorMessageState,
-        terminateCourse = { },
-        resumeCourse = { },
+        terminateCourse = { viewModel.terminateCourse() },
+        resumeCourse = { viewModel.resumeCourse() },
         onClearError = {
             viewModel.clearError()
         }
@@ -78,10 +74,11 @@ fun AccutaneCourseDetailsScreenContent(
     onClearError: () -> Unit
 ) {
     state.item?.let { item ->
-        val remainingDays: Int = item.getRemainingDays()
-        val treatmentDay: Long = item.getTreatmentDay()
-        val percentage: Float =
-            Math.round(((item.accumulatedCourseDose / item.totalTargetDose) * 100)).toFloat()
+        val (remainingDays, treatmentDay, percentage) = if (item.terminated) {
+            Triple(item.remainingDays, item.treatmentDay, item.percentage)
+        } else {
+            Triple(item.getRemainingDays(), item.getTreatmentDay(), item.getPercentage())
+        }
         Scaffold { innerPadding ->
             Box {
                 Column(

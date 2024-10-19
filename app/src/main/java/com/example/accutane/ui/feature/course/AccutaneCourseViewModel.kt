@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.accutane.base.ui.BaseViewModel
 import com.example.accutane.domain.interactor.AccutaneInteractor
 import com.example.accutane.domain.model.AccutaneCourseModel
-import com.example.accutane.getCurrentRusDate
 import com.example.accutane.ui.NavigationKeys
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

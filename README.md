@@ -1,76 +1,74 @@
-# Техническое задание для разработки приложения Accutane
+## General information
 
-## Общая информация
+**Application Name:** Accutane
 
-**Название приложения:** Accutane
+**Purpose:** The application is designed to conveniently track the course of retinoid intake. It allows users to mark the days of admission, receive reminders about the need for admission, see the end date of the course, as well as track the total cumulative dose and the current dose scored.
 
-**Цель:** Приложение предназначено для удобного отслеживания курса приема ретиноидов. Оно позволяет пользователям отмечать дни приема, получать напоминания о необходимости приема, видеть дату окончания курса, а также отслеживать общую кумулятивную дозу и текущую набранную дозу.
+## Basic functionality
 
-## Основной функционал
+### 1. The start window
 
-### 1. Стартовое окно
+- **Description:** When the application is first launched, it displays a window with a list of courses.
+- **Contents:**
+- A list of courses with the name and start date.
+  - The ability to delete, view and change courses.
+  - Floating button in the lower right corner to add a new course.
 
-- **Описание:** При первом запуске приложение отображает окно со списком курсов.
-- **Содержимое:**
-    - Список курсов с названием и датой начала.
-    - Возможность удаления, просмотра и изменения курсов.
-    - Плавающая кнопка в правом нижнем углу для добавления нового курса.
+###2. Adding a course
 
-### 2. Добавление курса
+- **Access:** Through the floating button on the start screen.
+- **Input fields:**
+- Daily dosage.
+  - The total desired dosage.
+  - The start date of the course.
+  - The time of the drug reminder.
+  - Name of the course.
+- **Action:** The "Save" button to add a course.
 
-- **Доступ:** Через плавающую кнопку на стартовом экране.
-- **Поля для ввода:**
-    - Дневная дозировка.
-    - Общая желаемая дозировка.
-    - Дата начала курса.
-    - Время напоминания о приеме препарата.
-    - Наименование курса.
-- **Действие:** Кнопка "Сохранить" для добавления курса.
+### 3. Viewing and editing the course
 
-### 3. Просмотр и редактирование курса
+- **Access:** When clicking on a course in the list.
+- **Information:**
+  - Percentage progress of the course in the form of a pie chart.
+  - The total number of days of treatment.
+  - The start date of the course.
+  - The daily dose of the drug.
+  - Already accumulated course dose.
+  - The number of days until the end of the course (calculated as the total dose / daily dose, rounded up).
+  - The total desired dose.
+- **Actions:**
+- "Change course" button: opens the course editing window (see point 2).
+- "Stop course" button: removes the course from the list.
 
-- **Доступ:** При нажатии на курс в списке.
-- **Информация:**
-    - Процентный прогресс курса в виде круговой диаграммы.
-    - Общее кол-во дней лечения.
-    - Дата начала курса.
-    - Суточная доза препарата.
-    - Уже накопленная курсовая доза.
-    - Количество дней до конца курса (рассчитывается как общая доза / суточную дозу, округляем вверх).
-    - Общая желаемая доза.
-- **Действия:**
-    - Кнопка "Изменить курс": открывает окно редактирования курса (см. пункт 2).
-    - Кнопка "Прекратить курс": удаляет курс из списка.
+###4. Reminders
 
-### 4. Напоминания
+- **Description:** Daily reminders about taking the capsule.
+- **Functions:**
+  - Notification with the option to select "Remind in 5 minutes" and "Close".
+  - If you select "Remind in 5 minutes", the notification is repeated after 5 minutes.
+  - When you select "Close", the dose is counted as drunk, and the application opens.
 
-- **Описание:** Ежедневные напоминания о приеме капсулы.
-- **Функции:**
-    - Уведомление с возможностью выбора "Напомнить через 5 мин" и "Закрыть".
-    - При выборе "Напомнить через 5 мин" уведомление повторяется через 5 минут.
-    - При выборе "Закрыть" доза засчитывается как выпитая, и открывается приложение.
+## Technical requirements
 
-## Технические требования
+1. **Platforms:** Android and iOS.
+2. **Development language:** Kotlin and KMP.
+3. **Notifications:** Use system notifications for reminders.
+4. **Interface:** It must be intuitive and comply with modern standards of mobile applications.
+5. **Security:** Ensure the protection of user data.
 
-1. **Платформы:** Android и iOS.
-2. **Язык разработки:** Kotlin и KMP.
-3. **Уведомления:** Использовать системные уведомления для напоминаний.
-4. **Интерфейс:** Должен быть интуитивно понятным и соответствовать современным стандартам мобильных приложений.
-5. **Безопасность:** Обеспечить защиту данных пользователей.
+## Additional requirements
 
-## Дополнительные требования
+- Implement the ability to localize the application to support multiple languages.
+- Provide responsive design for different screen sizes.
 
-- Реализовать возможность локализации приложения для поддержки нескольких языков.
-- Обеспечить адаптивный дизайн для различных размеров экранов.
+## Quality control
 
-## Контроль качества
+- Conduct testing on all supported devices.
+- Make sure that all functions work correctly and there are no critical errors.
+- To test the user interface for usability.
 
-- Провести тестирование на всех поддерживаемых устройствах.
-- Убедиться в корректной работе всех функций и отсутствии критических ошибок.
-- Провести тестирование пользовательского интерфейса на удобство использования.
+## Deadlines
 
-## Сроки выполнения
-
-- Разработка: 3 месяца.
-- Тестирование: 1 месяц.
-- Внедрение и публикация: 1 месяц.
+- Development: 3 months.
+- Testing: 1 month.
+- Implementation and publication: 1 month.
