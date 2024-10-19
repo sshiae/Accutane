@@ -26,5 +26,11 @@ data class AccutaneCourseDatabase(
     @ColumnInfo(name = "create_date")
     val createDate: Date,
     @ColumnInfo(name = "terminated")
-    val terminated: Boolean
+    val terminated: Boolean,
+    @ColumnInfo(name = "remaining_days")
+    val remainingDays: Int,
+    @ColumnInfo(name = "treatment_day")
+    val treatmentDay: Long,
+    @ColumnInfo(name = "percentage")
+    val percentage: Float
 )

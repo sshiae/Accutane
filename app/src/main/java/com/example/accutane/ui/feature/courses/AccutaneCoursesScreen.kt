@@ -1,5 +1,6 @@
 package com.example.accutane.ui.feature.courses
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,12 +35,14 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,15 +72,18 @@ fun AccutaneCoursesScreen(
     onAddItem: () -> Unit,
     onItemClicked: (id: Long?) -> Unit
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.firstLoad()
+    }
     AccutaneCoursesContent(
         accutaneCoursesState = viewModel.state,
         loadingState = viewModel.loadingState,
         errorMessageState = viewModel.errorMessageState,
-        getUniqueNames = { viewModel.getUniqueNames() },
         onItemClicked = onItemClicked,
         onAddItem = onAddItem,
+        onSetFilter = { key: String, value: Boolean -> viewModel.setFilterValue(key, value) },
         onDeleteItem = { id -> viewModel.deleteAccutaneCourse(id) },
-        onFilterItems = { filters -> viewModel.setFilters(filters) },
+        onFilterItems = { viewModel.filtersItems() },
         onSearch = { searchQuery -> viewModel.setSearchQuery(searchQuery) },
         onClearError = { viewModel.clearError() }
     )
@@ -89,11 +95,11 @@ fun AccutaneCoursesContent(
     accutaneCoursesState: AccutaneCoursesContract.State,
     loadingState: Boolean,
     errorMessageState: String?,
-    getUniqueNames: () -> List<String>,
     onAddItem: () -> Unit,
     onItemClicked: (id: Long?) -> Unit,
+    onSetFilter: (key: String, value: Boolean) -> Unit,
     onDeleteItem: (id: Long?) -> Unit,
-    onFilterItems: (filters: List<AccutaneCourseFilterModel>) -> Unit,
+    onFilterItems: () -> Unit,
     onSearch: (searchQuery: String) -> Unit,
     onClearError: () -> Unit
 ) {
@@ -142,7 +148,8 @@ fun AccutaneCoursesContent(
                     sheetState = sheetState
                 ) {
                     ModalBottomSheetContent(
-                        names = getUniqueNames(),
+                        filters = accutaneCoursesState.filters,
+                        onSetFilter = onSetFilter,
                         onFilterItems = onFilterItems,
                         onDismiss = {
                             scope.launch {
@@ -190,25 +197,61 @@ fun AccutaneCourseList(
     onDeleteItem: (id: Long?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
-        contentPadding = PaddingValues(
-            top = 10.dp,
-            bottom = 10.dp
-        ),
-        modifier = modifier
-    ) {
-        itemsIndexed(courseItems) { index, item ->
-            AccutaneCourseItem(
-                id = item.id,
-                title = item.name,
-                subtitle = item.createDate.getCurrentRusDate(),
-                onItemClicked = onItemClicked,
-                onDeleteItem = onDeleteItem
-            )
-            if (index < courseItems.lastIndex) {
-                Spacer(modifier = Modifier.height(16.dp))
+    if (courseItems.isEmpty()) {
+        NoDataPlug(
+            text = stringResource(id = R.string.no_data_plug)
+        )
+    } else {
+        LazyColumn(
+            contentPadding = PaddingValues(
+                top = 10.dp,
+                bottom = 10.dp
+            ),
+            modifier = modifier
+        ) {
+            itemsIndexed(courseItems) { index, item ->
+                AccutaneCourseItem(
+                    id = item.id,
+                    title = item.name,
+                    subtitle = item.createDate.getCurrentRusDate(),
+                    onItemClicked = onItemClicked,
+                    onDeleteItem = onDeleteItem
+                )
+                if (index < courseItems.lastIndex) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
         }
+    }
+}
+
+@Composable
+fun NoDataPlug(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .padding(horizontal = 0.dp, vertical = 10.dp)
+            .fillMaxWidth()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_pill),
+            contentDescription = "Нет курсов",
+            modifier = Modifier.size(100.dp)
+        )
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+        Text(
+            text = text,
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.titleLarge.copy(
+                color = MaterialTheme.colorScheme.primary
+            ),
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
@@ -317,16 +360,12 @@ fun SearchBar(
 
 @Composable
 fun ModalBottomSheetContent(
-    names: List<String>,
+    filters: List<AccutaneCourseFilterModel>,
+    onSetFilter: (key: String, value: Boolean) -> Unit,
+    onFilterItems: () -> Unit,
     onDismiss: () -> Unit,
-    onFilterItems: (filters: List<AccutaneCourseFilterModel>) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val checkedState = rememberSaveable {
-        names.map { item ->
-            AccutaneCourseFilterModel(key = item, value = false)
-        }.toMutableStateList()
-    }
     Column(
         modifier = modifier
             .padding(16.dp)
@@ -336,19 +375,19 @@ fun ModalBottomSheetContent(
             modifier = Modifier
                 .height(144.dp)
         ) {
-            items(names) { name ->
+            items(filters) { filter ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
                     Checkbox(
-                        checked = checkedState.getOrDefault(name, false),
+                        checked = filter.value,
                         onCheckedChange = {
-                            checkedState.set(name, it)
+                            onSetFilter(filter.key, it)
                         }
                     )
-                    Text(text = name)
+                    Text(text = filter.key)
                 }
             }
         }
@@ -356,7 +395,7 @@ fun ModalBottomSheetContent(
         AccutaneButton(
             textId = R.string.filters_text_btn,
             onClick = {
-                onFilterItems(checkedState)
+                onFilterItems()
                 onDismiss()
             }
         )

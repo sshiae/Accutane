@@ -30,11 +30,16 @@ class AccutaneCourseDetailsViewModel @Inject constructor(
     )
         private set
 
-    init {
-        firstLoad()
-    }
+    var showTerminateDialog by mutableStateOf(false)
+        private set
 
-    private fun firstLoad() {
+    var showResumeDialog by mutableStateOf(false)
+        private set
+
+    /**
+     * Updates state
+     */
+    fun firstLoad() {
         viewModelScope.launch {
             try {
                 showLoading()
@@ -63,14 +68,15 @@ class AccutaneCourseDetailsViewModel @Inject constructor(
                 showLoading()
                 val item: AccutaneCourseModel = requireItem().let {
                     it.copy(
-                        remainingDays = it.getRemainingDays(),
-                        treatmentDay = it.getTreatmentDay(),
-                        percentage = it.getPercentage(),
+                        remainingDays = it.calculateRemainingDays(),
+                        treatmentDay = it.calculateTreatmentDay(),
+                        percentage = it.calculatePercentage(),
                         terminated = true
                     )
                 }
                 interactor.saveAccutaneCourse(item)
                 state = state.copy(item = item)
+                showTerminateDialog = true
             } catch (e: Exception) {
                 showErrorMessage(e.message)
             } finally {
@@ -86,9 +92,46 @@ class AccutaneCourseDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 showLoading()
+                val originalItem: AccutaneCourseModel = requireItem()
+                if (originalItem.percentage == 100f) {
+                    showResumeDialog = true
+                    return@launch
+                }
                 val item: AccutaneCourseModel = requireItem().copy(terminated = false)
                 interactor.saveAccutaneCourse(item)
                 state = state.copy(item = item)
+            } catch (e: Exception) {
+                showErrorMessage(e.message)
+            } finally {
+                hideLoading()
+            }
+        }
+    }
+
+    /**
+     * It is used to close the dialog when the course is terminated.
+     */
+    fun closeTerminateDialog() {
+        viewModelScope.launch {
+            try {
+                showLoading()
+                showTerminateDialog = false
+            } catch (e: Exception) {
+                showErrorMessage(e.message)
+            } finally {
+                hideLoading()
+            }
+        }
+    }
+
+    /**
+     * Used to close the dialog when resuming the course
+     */
+    fun closeResumeDialog() {
+        viewModelScope.launch {
+            try {
+                showLoading()
+                showResumeDialog = false
             } catch (e: Exception) {
                 showErrorMessage(e.message)
             } finally {

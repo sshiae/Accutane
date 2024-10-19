@@ -25,7 +25,10 @@ private fun AccutaneCourseScreenContentPreview() {
                     accumulatedCourseDose = 10.0,
                     appointmentReminderTime = "9:00 AM",
                     createDate = Date(),
-                    terminated = true
+                    terminated = true,
+                    treatmentDay = 4L,
+                    remainingDays = 5,
+                    percentage = 5f
                 ),
                 isAdding = true
             ),
@@ -52,7 +55,10 @@ private fun AccutaneCourseScreenContentLoadingPreview() {
                     accumulatedCourseDose = 10.0,
                     appointmentReminderTime = "9:00 AM",
                     createDate = Date(),
-                    terminated = true
+                    terminated = true,
+                    treatmentDay = 4L,
+                    remainingDays = 5,
+                    percentage = 5f
                 ),
                 isAdding = true
             ),
@@ -79,7 +85,10 @@ private fun AccutaneCourseScreenContentWithErrorPreview() {
                     accumulatedCourseDose = 10.0,
                     appointmentReminderTime = "9:00 AM",
                     createDate = Date(),
-                    terminated = true
+                    terminated = true,
+                    treatmentDay = 4L,
+                    remainingDays = 5,
+                    percentage = 5f
                 ),
                 isAdding = true
             ),

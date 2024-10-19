@@ -16,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -41,6 +42,9 @@ fun AccutaneCourseScreen(
     onBackClicked: () -> Unit,
     viewModel: AccutaneCourseViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.firstLoad()
+    }
     AccutaneCourseScreenContent(
         state = viewModel.state,
         loadingState = viewModel.loadingState,
@@ -77,7 +81,10 @@ fun AccutaneCourseScreenContent(
         accumulatedCourseDose = model.accumulatedCourseDose,
         appointmentReminderTime = model.appointmentReminderTime,
         createDate = model.createDate,
-        terminated = false
+        terminated = false,
+        treatmentDay = model.treatmentDay,
+        remainingDays = model.remainingDays,
+        percentage = model.percentage
     )
     Scaffold(
         topBar = {
@@ -158,8 +165,8 @@ fun AccutaneCourseScreenContent(
     }
     errorMessageState?.let { errorMessage ->
         AccutaneErrorAlertDialog(
-            errorMessage = errorMessage,
-            onClearError = onClearError
+            text = errorMessage,
+            onDismiss = onClearError
         )
     }
 }

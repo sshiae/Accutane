@@ -2,7 +2,8 @@ package com.example.accutane.ui.feature.details.preview
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.accutane.ui.feature.ErrorDialog
+import com.example.accutane.ui.feature.AccutaneErrorAlertDialog
+import com.example.accutane.ui.feature.courses.NoDataPlug
 import com.example.accutane.ui.feature.details.AccutaneCourseDetailsContract
 import com.example.accutane.ui.feature.details.AccutaneCourseDetailsScreenContent
 import com.example.accutane.ui.feature.details.CongratulationsDialog
@@ -18,7 +19,14 @@ private fun AccutaneCourseDetailsScreenContentPreview() {
             ),
             loadingState = false,
             terminateCourse = {},
-            resumeCourse = {}
+            resumeCourse = {},
+            onClearError = {},
+            errorMessageState = null,
+            onEditItem = {},
+            closeTerminateDialog = {},
+            closeResumeDialog = {},
+            showTerminateDialog = false,
+            showResumeDialog = false
         )
     }
 }
@@ -37,10 +45,20 @@ private fun CongratulationsDialogPreview() {
 @Composable
 private fun ErrorDialogPreview() {
     AccutaneTheme {
-        ErrorDialog(
+        AccutaneErrorAlertDialog(
             title = "Ошибка возобновления курса",
-            text = "Курс закончен!\u2028Возобновление невозможно",
+            text = "Курс закончен!\nВозобновление невозможно",
             onDismiss = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun EmptyCourseListMessagePreview() {
+    AccutaneTheme {
+        NoDataPlug(
+            text = "Необходимо добавить курс"
         )
     }
 }

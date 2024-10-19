@@ -23,21 +23,32 @@ class AccutaneCoursesViewModel @Inject constructor(
     var state by mutableStateOf(
         AccutaneCoursesContract.State(
             items = listOf(),
-            filteredItems = listOf()
+            filteredItems = listOf(),
+            filters = listOf(),
+            searchQuery = ""
         )
     )
         private set
 
-    init {
-        firstLoad()
-    }
-
-    private fun firstLoad() {
+    /**
+     * Updates state
+     */
+    fun firstLoad() {
         viewModelScope.launch {
             try {
                 showLoading()
                 val courses: List<AccutaneCourseModel> = interactor.getAccutaneCourses()
                 state = state.copy(items = courses, filteredItems = courses)
+                if (courses.isEmpty()) {
+                    state = state.copy(filters = emptyList(), searchQuery = "")
+                } else {
+                    if (state.filters.isNotEmpty()) {
+                        makeItemsForContent()
+                    }
+                    if (state.filters.isEmpty()) {
+                        fillFilters()
+                    }
+                }
             } catch (e: Exception) {
                 showErrorMessage(e.message)
             } finally {
@@ -46,14 +57,24 @@ class AccutaneCoursesViewModel @Inject constructor(
         }
     }
 
+    private fun fillFilters() {
+        state = state.copy(
+            filters = getUniqueNamesForFilters()
+                .map { item -> AccutaneCourseFilterModel(key = item, value = false) }
+        )
+    }
+
+    private fun getUniqueNamesForFilters(): List<String> {
+        return state.items.map { it.name }.distinct()
+    }
+
     /**
      * Used for set a filters
      */
-    fun setFilters(filters: List<AccutaneCourseFilterModel>) {
+    fun filtersItems() {
         viewModelScope.launch {
             try {
                 showLoading()
-                state = state.copy(filters = filters)
                 makeItemsForContent()
             } catch (e: Exception) {
                 showErrorMessage(e.message)
@@ -98,6 +119,9 @@ class AccutaneCoursesViewModel @Inject constructor(
     ): List<AccutaneCourseModel> {
         val filters: List<AccutaneCourseFilterModel> = state.filters
         val appliedFilters: List<String> = filters.filter { it.value }.map { it.key }
+        if (appliedFilters.isEmpty()) {
+            return items
+        }
         val filteredItems: List<AccutaneCourseModel> = items
             .filter { appliedFilters.contains(it.name) }
         return filteredItems
@@ -113,13 +137,6 @@ class AccutaneCoursesViewModel @Inject constructor(
     }
 
     /**
-     * Returns a list of unique course names
-     */
-    fun getUniqueNames(): List<String> {
-        return state.items.map { it.name }.distinct()
-    }
-
-    /**
      * Delete a course
      */
     fun deleteAccutaneCourse(id: Long?) {
@@ -127,6 +144,30 @@ class AccutaneCoursesViewModel @Inject constructor(
             try {
                 showLoading()
                 interactor.deleteAccutaneCourse(id)
+                firstLoad()
+            } catch (e: Exception) {
+                showErrorMessage(e.message)
+            } finally {
+                hideLoading()
+            }
+        }
+    }
+
+    /**
+     * Used to set the value of the filter
+     */
+    fun setFilterValue(key: String, value: Boolean) {
+        viewModelScope.launch {
+            try {
+                showLoading()
+                state = state.copy(
+                    filters = state.filters.map { item ->
+                        if (item.key == key) {
+                            item.value = value
+                        }
+                        item
+                    }
+                )
             } catch (e: Exception) {
                 showErrorMessage(e.message)
             } finally {

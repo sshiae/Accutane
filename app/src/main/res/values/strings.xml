@@ -25,4 +25,7 @@
     <string name="days_left">До конца курса</string>
     <string name="add_course_btn_description">Добавить</string>
     <string name="close_btn_text">Закрыть</string>
+    <string name="no_data_plug">Необходимо добавить курс</string>
+    <string name="resume_course_error_title">Ошибка возобновления курса</string>
+    <string name="resume_course_error_message">Курс закончен!\nВозобновление невозможно</string>
 </resources>

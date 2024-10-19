@@ -33,23 +33,25 @@ class AccutaneCourseViewModel @Inject constructor(
                 accumulatedCourseDose = 0.0,
                 appointmentReminderTime = "",
                 createDate = Date(),
-                terminated = false
+                terminated = false,
+                remainingDays = 0,
+                treatmentDay = 0L,
+                percentage = 0F
             ),
             isAdding = true
         )
     )
         private set
 
-    init {
-        firstLoad()
-    }
-
-    private fun firstLoad() {
+    /**
+     * Updates state
+     */
+    fun firstLoad() {
         viewModelScope.launch {
             try {
                 showLoading()
-                val courseId = stateHandle.get<Long?>(NavigationKeys.Arg.ACCUTANE_COURSE_ID)
-                if (courseId != null) {
+                val courseId = stateHandle.get<Long>(NavigationKeys.Arg.ACCUTANE_COURSE_ID)
+                if (courseId != 0L) {
                     val foundModel: AccutaneCourseModel =
                         interactor.getAccutaneCourseById(courseId)
                     state = state.copy(model = foundModel, isAdding = false)

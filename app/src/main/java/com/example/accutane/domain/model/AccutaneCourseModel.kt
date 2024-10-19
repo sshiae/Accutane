@@ -22,7 +22,7 @@ data class AccutaneCourseModel(
     /**
      * Returns the number of days left before treatment
      */
-    fun getRemainingDays(): Int {
+    fun calculateRemainingDays(): Int {
         val remainingDose = totalTargetDose - accumulatedCourseDose
         if (remainingDose <= 0) {
             return 0
@@ -34,7 +34,7 @@ data class AccutaneCourseModel(
     /**
      * Returns the number of days of treatment
      */
-    fun getTreatmentDay(): Long {
+    fun calculateTreatmentDay(): Long {
         val today = Date()
         val diff: Long = today.time - createDate.time
         return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
@@ -43,7 +43,7 @@ data class AccutaneCourseModel(
     /**
      * Returns the percentage of course completion
      */
-    fun getPercentage(): Float {
+    fun calculatePercentage(): Float {
         return Math.round(((accumulatedCourseDose / totalTargetDose) * 100)).toFloat()
     }
 }

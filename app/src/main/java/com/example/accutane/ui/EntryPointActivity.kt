@@ -13,6 +13,7 @@ import androidx.navigation.navArgument
 import com.example.accutane.ui.NavigationKeys.Arg.ACCUTANE_COURSE_ID
 import com.example.accutane.ui.feature.course.AccutaneCourseScreen
 import com.example.accutane.ui.feature.courses.AccutaneCoursesScreen
+import com.example.accutane.ui.feature.details.AccutaneCourseDetailsScreen
 import com.example.accutane.ui.theme.AccutaneTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,18 +39,25 @@ private fun AccutaneApp() {
         composable(route = NavigationKeys.Route.ACCUTANE_COURSES_LIST) {
             AccutaneCoursesDestination(navController)
         }
-        composable(route = NavigationKeys.Route.ACCUTANE_COURSE) {
-            AccutaneCourseDestination(navController)
-        }
         composable(
-            route = NavigationKeys.Route.ACCUTANE_COURSE_DETAILS,
+            route = "${NavigationKeys.Route.ACCUTANE_COURSE}/{$ACCUTANE_COURSE_ID}",
             arguments = listOf(
                 navArgument(ACCUTANE_COURSE_ID) {
                     type = NavType.LongType
                 }
             )
         ) {
-
+            AccutaneCourseDestination(navController)
+        }
+        composable(
+            route = "${NavigationKeys.Route.ACCUTANE_COURSES_LIST}/{$ACCUTANE_COURSE_ID}",
+            arguments = listOf(
+                navArgument(ACCUTANE_COURSE_ID) {
+                    type = NavType.LongType
+                }
+            )
+        ) {
+            AccutaneCourseDetailsDestination(navController)
         }
     }
 }
@@ -60,7 +68,7 @@ private fun AccutaneCoursesDestination(
 ) {
     AccutaneCoursesScreen(
         onAddItem = {
-            navController.navigate(NavigationKeys.Route.ACCUTANE_COURSE)
+            navController.navigate("${NavigationKeys.Route.ACCUTANE_COURSE}/0")
         },
         onItemClicked = { itemId ->
             navController.navigate("${NavigationKeys.Route.ACCUTANE_COURSES_LIST}/${itemId}")
@@ -79,6 +87,17 @@ private fun AccutaneCourseDestination(
     )
 }
 
+@Composable
+private fun AccutaneCourseDetailsDestination(
+    navController: NavHostController
+) {
+    AccutaneCourseDetailsScreen(
+        onEditItem = { itemId ->
+            navController.navigate("${NavigationKeys.Route.ACCUTANE_COURSE}/$itemId")
+        }
+    )
+}
+
 object NavigationKeys {
     object Arg {
         const val ACCUTANE_COURSE_ID = "accutaneCourseId"
@@ -87,6 +106,5 @@ object NavigationKeys {
     object Route {
         const val ACCUTANE_COURSES_LIST = "accutane_courses_list"
         const val ACCUTANE_COURSE = "accutane_course"
-        const val ACCUTANE_COURSE_DETAILS = "$ACCUTANE_COURSES_LIST/$ACCUTANE_COURSE_ID"
     }
 }

@@ -2,6 +2,7 @@ package com.example.accutane.ui.feature.courses.preview
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.accutane.domain.model.AccutaneCourseFilterModel
 import com.example.accutane.domain.model.AccutaneCourseModel
 import com.example.accutane.ui.feature.LoadingBar
 import com.example.accutane.ui.feature.courses.AccutaneCourseItem
@@ -58,13 +59,15 @@ private fun AccutaneCoursesScreenPreview() {
             ),
             loadingState = false,
             errorMessageState = null,
-            getUniqueNames = { listOf() },
             onItemClicked = {},
             onDeleteItem = {},
             onFilterItems = {},
             onClearError = {},
             onAddItem = {},
-            onSearch = {}
+            onSearch = {},
+            onSetFilter = { key, value ->
+
+            }
         )
     }
 }
@@ -82,9 +85,17 @@ private fun LoadingBarPreview() {
 private fun BottomSheetContentPreview() {
     AccutaneTheme {
         ModalBottomSheetContent(
-            names = listOf("Аккутан", "Роаккутан", "Сотрет", "Сотрет", "Сотрет", "Сотрет", "Сотрет", "Сотрет", "Сотрет", "Сотрет", "Сотрет", "Сотрет"),
             onFilterItems = {},
-            onDismiss = {}
+            onDismiss = {},
+            filters = listOf(
+                AccutaneCourseFilterModel(
+                    key = "Test",
+                    value = false
+                )
+            ),
+            onSetFilter = { key, value ->
+
+            }
         )
     }
 }
@@ -99,7 +110,10 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
             createDate = Date(),
-            terminated = true
+            terminated = true,
+            treatmentDay = 4L,
+            remainingDays = 5,
+            percentage = 5f
         ),
         AccutaneCourseModel(
             id = 1,
@@ -109,7 +123,10 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
             createDate = Date(),
-            terminated = true
+            terminated = true,
+            treatmentDay = 4L,
+            remainingDays = 5,
+            percentage = 5f
         ),
         AccutaneCourseModel(
             id = 1,
@@ -119,7 +136,10 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
             createDate = Date(),
-            terminated = true
+            terminated = true,
+            treatmentDay = 4L,
+            remainingDays = 5,
+            percentage = 5f
         ),
         AccutaneCourseModel(
             id = 1,
@@ -129,7 +149,10 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
             createDate = Date(),
-            terminated = true
+            terminated = true,
+            treatmentDay = 4L,
+            remainingDays = 5,
+            percentage = 5f
         ),
         AccutaneCourseModel(
             id = 1,
@@ -139,7 +162,10 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
             createDate = Date(),
-            terminated = true
+            terminated = true,
+            treatmentDay = 4L,
+            remainingDays = 5,
+            percentage = 5f
         ),
         AccutaneCourseModel(
             id = 1,
@@ -149,7 +175,10 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
             createDate = Date(),
-            terminated = true
+            terminated = true,
+            treatmentDay = 4L,
+            remainingDays = 5,
+            percentage = 5f
         ),
         AccutaneCourseModel(
             id = 1,
@@ -159,7 +188,10 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
             createDate = Date(),
-            terminated = true
+            terminated = true,
+            treatmentDay = 4L,
+            remainingDays = 5,
+            percentage = 5f
         ),        AccutaneCourseModel(
             id = 1,
             name = "Курс 1",
@@ -168,7 +200,10 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             accumulatedCourseDose = 200.0,
             appointmentReminderTime = "2023-10-01T09:00:00",
             createDate = Date(),
-            terminated = true
+            terminated = true,
+            treatmentDay = 4L,
+            remainingDays = 5,
+            percentage = 5f
         ),
         AccutaneCourseModel(
             id = 2,
@@ -178,7 +213,10 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             accumulatedCourseDose = 600.0,
             appointmentReminderTime = "2023-10-02T10:30:00",
             createDate = Date(),
-            terminated = true
+            terminated = true,
+            treatmentDay = 4L,
+            remainingDays = 5,
+            percentage = 5f
         ),
         AccutaneCourseModel(
             id = 3,
@@ -188,7 +226,10 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             accumulatedCourseDose = 300.0,
             appointmentReminderTime = "2023-10-03T11:15:00",
             createDate = Date(),
-            terminated = true
+            terminated = true,
+            treatmentDay = 4L,
+            remainingDays = 5,
+            percentage = 5f
         ),
         AccutaneCourseModel(
             id = 4,
@@ -198,7 +239,10 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             accumulatedCourseDose = 150.0,
             appointmentReminderTime = "2023-10-04T14:00:00",
             createDate = Date(),
-            terminated = true
+            terminated = true,
+            treatmentDay = 4L,
+            remainingDays = 5,
+            percentage = 5f
         ),
         AccutaneCourseModel(
             id = 5,
@@ -208,7 +252,10 @@ private fun getPreviewCourseList(): List<AccutaneCourseModel> {
             accumulatedCourseDose = 1000.0,
             appointmentReminderTime = "2023-10-05T16:45:00",
             createDate = Date(),
-            terminated = true
+            terminated = true,
+            treatmentDay = 4L,
+            remainingDays = 5,
+            percentage = 5f
         )
     )
     return previewData

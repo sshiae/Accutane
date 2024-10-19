@@ -23,6 +23,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,17 +55,24 @@ import com.example.accutane.ui.theme.GrayForPieChart
 
 @Composable
 fun AccutaneCourseDetailsScreen(
-    viewModel: AccutaneCourseDetailsViewModel = hiltViewModel()
+    viewModel: AccutaneCourseDetailsViewModel = hiltViewModel(),
+    onEditItem: (itemId: Long) -> Unit
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.firstLoad()
+    }
     AccutaneCourseDetailsScreenContent(
         state = viewModel.state,
         loadingState = viewModel.loadingState,
         errorMessageState = viewModel.errorMessageState,
         terminateCourse = { viewModel.terminateCourse() },
+        showTerminateDialog = viewModel.showTerminateDialog,
+        closeTerminateDialog = { viewModel.closeTerminateDialog() },
         resumeCourse = { viewModel.resumeCourse() },
-        onClearError = {
-            viewModel.clearError()
-        }
+        showResumeDialog = viewModel.showResumeDialog,
+        closeResumeDialog = { viewModel.closeResumeDialog() },
+        onClearError = { viewModel.clearError() },
+        onEditItem = onEditItem
     )
 }
 
@@ -70,14 +82,19 @@ fun AccutaneCourseDetailsScreenContent(
     loadingState: Boolean,
     errorMessageState: String?,
     terminateCourse: () -> Unit,
+    showTerminateDialog: Boolean,
+    closeTerminateDialog: () -> Unit,
     resumeCourse: () -> Unit,
-    onClearError: () -> Unit
+    showResumeDialog: Boolean,
+    closeResumeDialog: () -> Unit,
+    onClearError: () -> Unit,
+    onEditItem: (itemId: Long) -> Unit
 ) {
     state.item?.let { item ->
         val (remainingDays, treatmentDay, percentage) = if (item.terminated) {
             Triple(item.remainingDays, item.treatmentDay, item.percentage)
         } else {
-            Triple(item.getRemainingDays(), item.getTreatmentDay(), item.getPercentage())
+            Triple(item.calculateRemainingDays(), item.calculateTreatmentDay(), item.calculatePercentage())
         }
         Scaffold { innerPadding ->
             Box {
@@ -142,12 +159,16 @@ fun AccutaneCourseDetailsScreenContent(
                         if (item.terminated) {
                             AccutaneButton(
                                 textId = R.string.resume_course_text_btn,
-                                onClick = resumeCourse
+                                onClick = {
+                                    resumeCourse()
+                                }
                             )
                         } else {
                             AccutaneButton(
                                 textId = R.string.terminate_course_text_btn,
-                                onClick = terminateCourse
+                                onClick = {
+                                    terminateCourse()
+                                }
                             )
                         }
                     }
@@ -156,7 +177,9 @@ fun AccutaneCourseDetailsScreenContent(
                     contentColor = Color.White,
                     containerColor = Blue80,
                     shape = CircleShape,
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        onEditItem(state.item.id!!)
+                    },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(16.dp)
@@ -170,6 +193,22 @@ fun AccutaneCourseDetailsScreenContent(
                     LoadingBar()
                 }
             }
+        }
+        if (showTerminateDialog) {
+            CongratulationsDialog(
+                onDismiss = {
+                    closeTerminateDialog()
+                }
+            )
+        }
+        if (showResumeDialog) {
+            AccutaneErrorAlertDialog(
+                title = stringResource(id = R.string.resume_course_error_title),
+                text = stringResource(id = R.string.resume_course_error_message),
+                onDismiss = {
+                    closeResumeDialog()
+                }
+            )
         }
     } ?: run {
         LoadingBar()
@@ -254,7 +293,7 @@ fun CongratulationsDialog(
         confirmButton = {
             AccutaneButton(
                 textId = R.string.close_btn_text,
-                onClick = { /*TODO*/ }
+                onClick = { onDismiss() }
             )
         },
         dismissButton = null

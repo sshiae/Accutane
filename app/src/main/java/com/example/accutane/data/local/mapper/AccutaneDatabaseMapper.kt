@@ -16,7 +16,10 @@ fun AccutaneCourseDatabase.toModel(): AccutaneCourseModel {
         accumulatedCourseDose = accumulatedCourseDose,
         appointmentReminderTime = appointmentReminderTime,
         createDate = createDate,
-        terminated = terminated
+        terminated = terminated,
+        remainingDays = remainingDays,
+        treatmentDay = treatmentDay,
+        percentage = percentage
     )
 }
 
@@ -29,6 +32,9 @@ fun AccutaneCourseModel.toDatabase(): AccutaneCourseDatabase {
         accumulatedCourseDose = accumulatedCourseDose,
         appointmentReminderTime = appointmentReminderTime,
         createDate = createDate,
-        terminated = terminated
+        terminated = terminated,
+        remainingDays = remainingDays,
+        treatmentDay = treatmentDay,
+        percentage = percentage
     )
 }
