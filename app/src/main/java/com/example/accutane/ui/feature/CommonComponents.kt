@@ -21,8 +21,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,7 +64,7 @@ fun AccutaneInputField(
     }
 
     Column {
-        TextField(
+        OutlinedTextField(
             value = valueState,
             onValueChange = {
                 valueState = it
@@ -77,7 +77,7 @@ fun AccutaneInputField(
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                 focusedContainerColor = MaterialTheme.colorScheme.surface
             ),
-            placeholder = {
+            label = {
                 Text(text = stringResource(id = placeholderId))
             },
             trailingIcon = trailingIcon,
@@ -103,8 +103,8 @@ fun AccutaneInputField(
 fun AccutaneErrorAlertDialog(
     text: String,
     onDismiss: () -> Unit,
-    title: String = "Ошибка",
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    title: String = "Ошибка"
 ) {
     AlertDialog(
         modifier = modifier,
@@ -145,7 +145,7 @@ fun AccutaneErrorAlertDialog(
         confirmButton = {
             AccutaneButton(
                 textId = R.string.close_btn_text,
-                onClick = { /*TODO*/ }
+                onClick = { }
             )
         },
         dismissButton = null

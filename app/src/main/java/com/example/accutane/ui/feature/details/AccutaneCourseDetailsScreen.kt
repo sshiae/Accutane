@@ -24,10 +24,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,17 +55,15 @@ fun AccutaneCourseDetailsScreen(
     onEditItem: (itemId: Long) -> Unit
 ) {
     LaunchedEffect(Unit) {
-        viewModel.firstLoad()
+        viewModel.updateState()
     }
     AccutaneCourseDetailsScreenContent(
         state = viewModel.state,
         loadingState = viewModel.loadingState,
         errorMessageState = viewModel.errorMessageState,
         terminateCourse = { viewModel.terminateCourse() },
-        showTerminateDialog = viewModel.showTerminateDialog,
         closeTerminateDialog = { viewModel.closeTerminateDialog() },
         resumeCourse = { viewModel.resumeCourse() },
-        showResumeDialog = viewModel.showResumeDialog,
         closeResumeDialog = { viewModel.closeResumeDialog() },
         onClearError = { viewModel.clearError() },
         onEditItem = onEditItem
@@ -82,10 +76,8 @@ fun AccutaneCourseDetailsScreenContent(
     loadingState: Boolean,
     errorMessageState: String?,
     terminateCourse: () -> Unit,
-    showTerminateDialog: Boolean,
     closeTerminateDialog: () -> Unit,
     resumeCourse: () -> Unit,
-    showResumeDialog: Boolean,
     closeResumeDialog: () -> Unit,
     onClearError: () -> Unit,
     onEditItem: (itemId: Long) -> Unit
@@ -110,7 +102,7 @@ fun AccutaneCourseDetailsScreenContent(
                             .padding(0.dp, 30.dp, 0.dp, 16.dp)
                     )
                     Text(
-                        text = "Сегодня ${treatmentDay}-й день лечения",
+                        text = stringResource(id = R.string.treatment_day_title).format(treatmentDay),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.titleMedium.copy(
                             color = Black80,
@@ -194,14 +186,14 @@ fun AccutaneCourseDetailsScreenContent(
                 }
             }
         }
-        if (showTerminateDialog) {
+        if (state.showTerminateDialog) {
             CongratulationsDialog(
                 onDismiss = {
                     closeTerminateDialog()
                 }
             )
         }
-        if (showResumeDialog) {
+        if (state.showResumeDialog) {
             AccutaneErrorAlertDialog(
                 title = stringResource(id = R.string.resume_course_error_title),
                 text = stringResource(id = R.string.resume_course_error_message),
@@ -278,12 +270,12 @@ fun CongratulationsDialog(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_pill),
-                    contentDescription = "Поздравление",
+                    contentDescription = stringResource(id = R.string.congratulations_image_description),
                     modifier = Modifier.size(80.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Поздравляем! Вы завершили курс.",
+                    text = stringResource(id = R.string.congratulations_text),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleMedium,
                     overflow = TextOverflow.Ellipsis

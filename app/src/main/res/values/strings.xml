@@ -28,4 +28,9 @@
     <string name="no_data_plug">Необходимо добавить курс</string>
     <string name="resume_course_error_title">Ошибка возобновления курса</string>
     <string name="resume_course_error_message">Курс закончен!\nВозобновление невозможно</string>
+    <string name="treatment_day_title">Сегодня %s-й день лечения</string>
+    <string name="congratulations_image_description">Поздравление</string>
+    <string name="congratulations_text">Поздравляем! Вы завершили курс.</string>
+    <string name="courses_not_found_image_description">Нет курсов</string>
+    <string name="filters_not_found_msg">Фильтры не найдены</string>
 </resources>

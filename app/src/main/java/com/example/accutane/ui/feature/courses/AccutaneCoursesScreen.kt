@@ -35,11 +35,8 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -57,8 +54,6 @@ import com.example.accutane.R
 import com.example.accutane.domain.model.AccutaneCourseFilterModel
 import com.example.accutane.domain.model.AccutaneCourseModel
 import com.example.accutane.getCurrentRusDate
-import com.example.accutane.getOrDefault
-import com.example.accutane.set
 import com.example.accutane.ui.feature.AccutaneButton
 import com.example.accutane.ui.feature.AccutaneErrorAlertDialog
 import com.example.accutane.ui.feature.LoadingBar
@@ -72,9 +67,6 @@ fun AccutaneCoursesScreen(
     onAddItem: () -> Unit,
     onItemClicked: (id: Long?) -> Unit
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.firstLoad()
-    }
     AccutaneCoursesContent(
         accutaneCoursesState = viewModel.state,
         loadingState = viewModel.loadingState,
@@ -238,7 +230,7 @@ fun NoDataPlug(
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_pill),
-            contentDescription = "Нет курсов",
+            contentDescription = stringResource(id = R.string.courses_not_found_image_description),
             modifier = Modifier.size(100.dp)
         )
         Spacer(
@@ -371,23 +363,36 @@ fun ModalBottomSheetContent(
             .padding(16.dp)
             .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .height(144.dp)
-        ) {
-            items(filters) { filter ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Checkbox(
-                        checked = filter.value,
-                        onCheckedChange = {
-                            onSetFilter(filter.key, it)
-                        }
-                    )
-                    Text(text = filter.key)
+        if (filters.isEmpty()) {
+            Text(
+                text = stringResource(id = R.string.filters_not_found_msg),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.primary
+                ),
+                overflow = TextOverflow.Ellipsis
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .height(144.dp)
+            ) {
+                items(filters) { filter ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Checkbox(
+                            checked = filter.value,
+                            onCheckedChange = {
+                                onSetFilter(filter.key, it)
+                            }
+                        )
+                        Text(text = filter.key)
+                    }
                 }
             }
         }

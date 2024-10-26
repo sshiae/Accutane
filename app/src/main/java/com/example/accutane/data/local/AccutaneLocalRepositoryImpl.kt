@@ -5,6 +5,8 @@ import com.example.accutane.data.local.mapper.toDatabase
 import com.example.accutane.data.local.mapper.toModel
 import com.example.accutane.data.local.mapper.toModels
 import com.example.accutane.domain.model.AccutaneCourseModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /**
@@ -13,8 +15,8 @@ import javax.inject.Inject
 class AccutaneLocalRepositoryImpl @Inject constructor(
     private val accutaneDao: AccutaneDao
 ) : AccutaneLocalRepository {
-    override suspend fun getAccutaneCourses(): List<AccutaneCourseModel> {
-        return accutaneDao.getAccutaneCourses().toModels()
+    override fun getAccutaneCourses(): Flow<List<AccutaneCourseModel>> {
+        return accutaneDao.getAccutaneCourses().map { it.toModels() }
     }
 
     override suspend fun deleteAccutaneCourse(id: Long?) {

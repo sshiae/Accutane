@@ -3,6 +3,9 @@ package com.example.accutane.common
 import androidx.room.TypeConverter
 import java.util.Date
 
+/**
+ * Date converter for the database
+ */
 class DateConverter {
     @TypeConverter
     fun toDate(dateLong: Long?): Date? {

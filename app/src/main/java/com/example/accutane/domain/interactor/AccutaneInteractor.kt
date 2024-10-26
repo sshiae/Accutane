@@ -2,6 +2,7 @@ package com.example.accutane.domain.interactor
 
 import com.example.accutane.data.local.AccutaneLocalRepository
 import com.example.accutane.domain.model.AccutaneCourseModel
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 /**
@@ -10,7 +11,7 @@ import javax.inject.Inject
 class AccutaneInteractor @Inject constructor(
     private val localRepository: AccutaneLocalRepository
 ) {
-    suspend fun getAccutaneCourses(): List<AccutaneCourseModel> {
+    fun getAccutaneCourses(): Flow<List<AccutaneCourseModel>> {
         return localRepository.getAccutaneCourses()
     }
 

@@ -43,7 +43,7 @@ fun AccutaneCourseScreen(
     viewModel: AccutaneCourseViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit) {
-        viewModel.firstLoad()
+        viewModel.updateState()
     }
     AccutaneCourseScreenContent(
         state = viewModel.state,

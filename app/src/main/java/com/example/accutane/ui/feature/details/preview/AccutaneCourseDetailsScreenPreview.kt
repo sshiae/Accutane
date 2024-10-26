@@ -15,7 +15,9 @@ private fun AccutaneCourseDetailsScreenContentPreview() {
     AccutaneTheme {
         AccutaneCourseDetailsScreenContent(
             state = AccutaneCourseDetailsContract.State(
-                item = null
+                item = null,
+                showResumeDialog = false,
+                showTerminateDialog = false
             ),
             loadingState = false,
             terminateCourse = {},
@@ -24,9 +26,7 @@ private fun AccutaneCourseDetailsScreenContentPreview() {
             errorMessageState = null,
             onEditItem = {},
             closeTerminateDialog = {},
-            closeResumeDialog = {},
-            showTerminateDialog = false,
-            showResumeDialog = false
+            closeResumeDialog = {}
         )
     }
 }

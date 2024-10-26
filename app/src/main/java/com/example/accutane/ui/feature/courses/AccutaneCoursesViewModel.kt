@@ -30,31 +30,39 @@ class AccutaneCoursesViewModel @Inject constructor(
     )
         private set
 
+    init {
+        updateState()
+    }
+
     /**
      * Updates state
      */
-    fun firstLoad() {
+    fun updateState() {
         viewModelScope.launch {
             try {
                 showLoading()
-                val courses: List<AccutaneCourseModel> = interactor.getAccutaneCourses()
-                state = state.copy(items = courses, filteredItems = courses)
-                if (courses.isEmpty()) {
-                    state = state.copy(filters = emptyList(), searchQuery = "")
-                } else {
-                    if (state.filters.isNotEmpty()) {
-                        makeItemsForContent()
+                interactor.getAccutaneCourses().collect { items ->
+                    state = state.copy(items = items, filteredItems = items)
+                    if (items.isEmpty()) {
+                        resetFilters()
+                    } else {
+                        if (state.filters.isNotEmpty()) {
+                            makeItemsForContent()
+                        }
+                        if (state.filters.isEmpty()) {
+                            fillFilters()
+                        }
                     }
-                    if (state.filters.isEmpty()) {
-                        fillFilters()
-                    }
+                    hideLoading()
                 }
             } catch (e: Exception) {
                 showErrorMessage(e.message)
-            } finally {
-                hideLoading()
             }
         }
+    }
+
+    private fun resetFilters() {
+        state = state.copy(filters = emptyList(), searchQuery = "")
     }
 
     private fun fillFilters() {
@@ -144,7 +152,6 @@ class AccutaneCoursesViewModel @Inject constructor(
             try {
                 showLoading()
                 interactor.deleteAccutaneCourse(id)
-                firstLoad()
             } catch (e: Exception) {
                 showErrorMessage(e.message)
             } finally {

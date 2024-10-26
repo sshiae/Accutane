@@ -25,21 +25,17 @@ class AccutaneCourseDetailsViewModel @Inject constructor(
 
     var state by mutableStateOf(
         AccutaneCourseDetailsContract.State(
-            item = null
+            item = null,
+            showTerminateDialog = false,
+            showResumeDialog = false
         )
     )
-        private set
-
-    var showTerminateDialog by mutableStateOf(false)
-        private set
-
-    var showResumeDialog by mutableStateOf(false)
         private set
 
     /**
      * Updates state
      */
-    fun firstLoad() {
+    fun updateState() {
         viewModelScope.launch {
             try {
                 showLoading()
@@ -75,8 +71,10 @@ class AccutaneCourseDetailsViewModel @Inject constructor(
                     )
                 }
                 interactor.saveAccutaneCourse(item)
-                state = state.copy(item = item)
-                showTerminateDialog = true
+                state = state.copy(
+                    item = item,
+                    showTerminateDialog = true
+                )
             } catch (e: Exception) {
                 showErrorMessage(e.message)
             } finally {
@@ -93,8 +91,8 @@ class AccutaneCourseDetailsViewModel @Inject constructor(
             try {
                 showLoading()
                 val originalItem: AccutaneCourseModel = requireItem()
-                if (originalItem.percentage == 100f) {
-                    showResumeDialog = true
+                if (originalItem.percentage >= 100f) {
+                    state = state.copy(showResumeDialog = true)
                     return@launch
                 }
                 val item: AccutaneCourseModel = requireItem().copy(terminated = false)
@@ -115,7 +113,7 @@ class AccutaneCourseDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 showLoading()
-                showTerminateDialog = false
+                state = state.copy(showTerminateDialog = false)
             } catch (e: Exception) {
                 showErrorMessage(e.message)
             } finally {
@@ -131,7 +129,7 @@ class AccutaneCourseDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 showLoading()
-                showResumeDialog = false
+                state = state.copy(showResumeDialog = false)
             } catch (e: Exception) {
                 showErrorMessage(e.message)
             } finally {

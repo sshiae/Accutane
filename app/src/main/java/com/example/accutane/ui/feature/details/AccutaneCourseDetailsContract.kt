@@ -11,6 +11,8 @@ class AccutaneCourseDetailsContract {
      * State for details
      */
     data class State(
-        val item: AccutaneCourseModel?
+        val item: AccutaneCourseModel?,
+        val showTerminateDialog: Boolean,
+        val showResumeDialog: Boolean
     )
 }

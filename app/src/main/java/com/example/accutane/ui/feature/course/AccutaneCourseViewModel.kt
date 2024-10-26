@@ -46,7 +46,7 @@ class AccutaneCourseViewModel @Inject constructor(
     /**
      * Updates state
      */
-    fun firstLoad() {
+    fun updateState() {
         viewModelScope.launch {
             try {
                 showLoading()
@@ -71,6 +71,7 @@ class AccutaneCourseViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 showLoading()
+                checkModel(model)
                 interactor.saveAccutaneCourse(model)
             } catch (e: Exception) {
                 showErrorMessage(e.message)
@@ -78,5 +79,20 @@ class AccutaneCourseViewModel @Inject constructor(
                 hideLoading()
             }
         }
+    }
+
+    private fun checkModel(model: AccutaneCourseModel) {
+        if (model.totalTargetDose < model.dailyDose) {
+            throw Exception(ERROR_TOTAL_DOSE_LESS_DAILY)
+        }
+
+        if (model.accumulatedCourseDose > model.totalTargetDose) {
+            throw Exception(ERROR_ACCUMULATED_DOSE_GREATER_TOTAL)
+        }
+    }
+
+    companion object {
+        private const val ERROR_TOTAL_DOSE_LESS_DAILY = "Общая целевая доза не может быть меньше дневной дозы"
+        private const val ERROR_ACCUMULATED_DOSE_GREATER_TOTAL = "Набранная доза не может быть больше общей целевой доза"
     }
 }

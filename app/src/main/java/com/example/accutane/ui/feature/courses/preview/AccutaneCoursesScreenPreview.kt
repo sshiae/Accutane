@@ -2,7 +2,6 @@ package com.example.accutane.ui.feature.courses.preview
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.accutane.domain.model.AccutaneCourseFilterModel
 import com.example.accutane.domain.model.AccutaneCourseModel
 import com.example.accutane.ui.feature.LoadingBar
 import com.example.accutane.ui.feature.courses.AccutaneCourseItem
@@ -87,12 +86,7 @@ private fun BottomSheetContentPreview() {
         ModalBottomSheetContent(
             onFilterItems = {},
             onDismiss = {},
-            filters = listOf(
-                AccutaneCourseFilterModel(
-                    key = "Test",
-                    value = false
-                )
-            ),
+            filters = listOf(),
             onSetFilter = { key, value ->
 
             }
